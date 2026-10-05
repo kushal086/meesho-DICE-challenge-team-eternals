@@ -1,0 +1,896 @@
+<title>Hypersale Prototype</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700;800&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --purple:#9F2089; --purple-dk:#570D48; --pink:#F43397; --lav:#F4ECF7; --lav2:#EDE3F3;
+  --text:#353543; --muted:#6E6E80; --line:#E6E4EC; --bg:#FFFFFF; --page:#EFEDF3;
+  --green:#038D63; --green-bg:#E7F6F0; --mall:#5B3CC4; --timer-bg:#FFEEDB; --timer:#C45A00;
+  --circle:#E4EAFB; --red:#D8303A;
+  --hub:#12303F; --hub2:#1D4A5E; --hub-bg:#F2F5F7; --hub-acc:#E8A317;
+  font-family:"Mulish", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--page);color:var(--text);font-size:14px;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+button:focus-visible,input:focus-visible,[data-act]:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+.wrap{display:flex;gap:32px;justify-content:center;align-items:flex-start;padding:24px 16px 40px;min-height:100%}
+
+/* ---------- side guide ---------- */
+.guide{width:340px;max-width:100%;display:flex;flex-direction:column;gap:18px;position:sticky;top:24px}
+.tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--purple);background:var(--lav);padding:4px 8px;border-radius:4px}
+.guide h1{font-size:26px;line-height:1.15;margin:8px 0 6px;text-wrap:balance;color:var(--purple-dk)}
+.guide p{margin:0;color:var(--muted);line-height:1.5}
+.switch{display:grid;grid-template-columns:1fr 1fr;background:#fff;border:1px solid var(--line);border-radius:10px;padding:4px;gap:4px}
+.switch button{padding:10px 8px;border-radius:7px;font-weight:700;font-size:13px;color:var(--muted)}
+.switch button.on{background:var(--purple);color:#fff}
+.switch button.on.hub{background:var(--hub)}
+.panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}
+.panel h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 12px;color:var(--muted)}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:start;line-height:1.4;counter-increment:s}
+.steps li::before{content:counter(s);width:24px;height:24px;border-radius:50%;background:var(--lav);color:var(--purple);font-weight:800;font-size:12px;display:grid;place-items:center}
+.steps li.stepdone::before{content:"✓";background:var(--green);color:#fff}
+.steps b{color:var(--text)}
+.steps span{color:var(--muted);font-size:13px}
+.kv{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.kv:last-child{border:0}
+.kv span{color:var(--muted)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.gbtn{padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:#fff;font-weight:700;font-size:13px}
+.gbtn:hover{border-color:var(--purple);color:var(--purple)}
+
+/* ---------- phone ---------- */
+.phone{width:390px;max-width:100%;height:800px;background:#111;border-radius:48px;padding:12px;box-shadow:0 30px 60px -20px rgba(40,10,50,.35);flex-shrink:0}
+.screen{position:relative;width:100%;height:100%;background:var(--bg);border-radius:38px;overflow:hidden;display:flex;flex-direction:column}
+.sbar{height:40px;flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:0 26px 0 30px;font-weight:800;font-size:15px}
+.sbar .ic{display:flex;gap:6px;align-items:center;font-size:11px}
+.batt{background:#F7D33B;border-radius:5px;padding:1px 5px;font-weight:800}
+.hubmode .sbar{background:var(--hub);color:#fff}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+.content::-webkit-scrollbar{display:none}
+.bnav{flex-shrink:0;display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--line);padding:6px 0 16px;background:#fff}
+.bnav button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;color:var(--muted);font-weight:600}
+.bnav button.on{color:var(--text);font-weight:800}
+.bnav svg{width:24px;height:24px}
+.toast{position:absolute;left:50%;bottom:90px;transform:translateX(-50%);background:#2b2b35;color:#fff;padding:10px 14px;border-radius:8px;font-size:12.5px;font-weight:600;width:max-content;max-width:86%;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s;z-index:30}
+.toast.show{opacity:1}
+
+/* ---------- customer: home ---------- */
+.hhead{display:flex;align-items:center;gap:10px;padding:6px 14px}
+.avatar{width:38px;height:38px;border-radius:50%;background:#F6DDB9;display:grid;place-items:center;overflow:hidden}
+.refer{display:flex;align-items:center;gap:5px;background:var(--lav);color:var(--purple);font-weight:700;font-size:12px;padding:6px 10px;border-radius:16px}
+.hicons{margin-left:auto;display:flex;gap:14px;align-items:center}
+.hicons svg{width:22px;height:22px}
+.search{margin:6px 14px 8px;border:1px solid #C9C6D6;border-radius:8px;display:flex;align-items:center;gap:8px;padding:9px 10px;color:#8B8A99;font-size:13px}
+.search .r{margin-left:auto;display:flex;gap:12px}
+.pin{display:flex;align-items:center;gap:6px;background:#F3F2F8;padding:9px 14px;font-size:13px;width:100%;text-align:left}
+.pin b{font-weight:800}
+.tabs{display:flex;gap:6px;padding:10px 14px 6px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{padding:6px 12px;border-radius:16px;border:1px solid var(--line);font-size:12.5px;font-weight:700;white-space:nowrap;color:var(--muted)}
+.tabs button.on{background:var(--text);color:#fff;border-color:var(--text)}
+.tabs button.hs{border-color:var(--purple);color:var(--purple);display:flex;align-items:center;gap:4px}
+.tabs button.hs.on{background:var(--purple);color:#fff}
+.tabs .new{font-size:9px;background:var(--pink);color:#fff;border-radius:6px;padding:1px 4px;letter-spacing:.04em}
+.cats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px 6px;padding:8px 10px}
+.cat{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;text-align:center;color:var(--text)}
+.cat .c{width:56px;height:56px;border-radius:50%;background:var(--circle);display:grid;place-items:center;overflow:hidden}
+.cat .c svg{width:40px;height:40px}
+.hsbanner{margin:8px 10px;border-radius:10px;padding:14px;background:linear-gradient(110deg,var(--purple-dk),var(--purple) 70%,#C43FA7);color:#fff;display:flex;align-items:center;gap:12px;width:calc(100% - 20px);text-align:left}
+.hsbanner .t{font-size:18px;font-weight:800;letter-spacing:-.01em}
+.hsbanner .s{font-size:12px;opacity:.9;margin-top:2px}
+.hsbanner .go{margin-left:auto;width:34px;height:34px;border-radius:50%;background:#fff;color:var(--purple);display:grid;place-items:center;font-weight:800;flex-shrink:0}
+.salebanner{margin:6px 0 0;background:linear-gradient(90deg,#8E1016,#B0141C);color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px}
+.salebanner .a{font-weight:800;font-size:17px;letter-spacing:.02em}
+.salebanner .b{font-weight:800;font-size:12px;color:#FFD86B}
+.salebanner .d{margin-left:auto;background:#fff;color:var(--red);border-radius:6px;text-align:center;padding:3px 8px;font-weight:800;line-height:1.1}
+.salebanner .d small{display:block;font-size:10px;background:var(--red);color:#fff;margin:-3px -8px 2px;padding:2px;border-radius:6px 6px 0 0}
+.fbar{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.fbar div{padding:11px 4px;text-align:center;font-size:13px;font-weight:600;border-right:1px solid var(--line)}
+.fbar div:last-child{border:0}
+.grid{display:grid;grid-template-columns:1fr 1fr}
+.card{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding-bottom:10px;text-align:left;display:flex;flex-direction:column}
+.card:nth-child(2n){border-right:0}
+.card .img{aspect-ratio:1/1.05;width:100%;display:grid;place-items:center;position:relative}
+.card .img svg{width:78%;height:78%}
+.ph{position:relative;overflow:hidden}
+.ph > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.card .img.ph{aspect-ratio:1/1.1}
+.pills{display:flex;gap:4px;padding:6px 8px 0;flex-wrap:wrap}
+.pill{font-size:10.5px;font-weight:800;border-radius:10px;padding:2px 7px;display:inline-flex;align-items:center;gap:3px}
+.pill.mall{background:var(--mall);color:#fff}
+.pill.timer{background:var(--timer-bg);color:var(--timer)}
+.pill.hs{background:var(--purple);color:#fff}
+.card .nm{padding:6px 8px 0;font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pr{padding:3px 8px 0;display:flex;align-items:baseline;gap:5px;flex-wrap:wrap}
+.pr b{font-size:17px;font-weight:800}
+.pr s{color:#9A99A8;font-size:12px}
+.pr .off{font-size:12px;font-weight:700;color:var(--text)}
+.offer{padding:2px 8px 0;color:var(--green);font-size:12px;font-weight:700}
+.rate{padding:6px 8px 0;display:flex;align-items:center;gap:5px;font-size:11.5px;color:#9A99A8}
+.rate span{background:var(--green);color:#fff;border-radius:10px;padding:1px 7px;font-weight:800;font-size:11.5px}
+.eta{padding:4px 8px 0;font-size:11.5px;font-weight:800;color:var(--purple)}
+
+/* hypersale landing */
+.hshero{background:linear-gradient(160deg,var(--purple-dk),var(--purple));color:#fff;padding:16px 14px 18px}
+.hshero h2{margin:0;font-size:24px;font-weight:800;letter-spacing:-.01em}
+.hshero p{margin:4px 0 0;font-size:13px;opacity:.92;line-height:1.4}
+.chips{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.chips span{font-size:11px;font-weight:700;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);padding:4px 8px;border-radius:12px}
+.hsinfo{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;font-size:12.5px;color:var(--muted);border-bottom:1px solid var(--line)}
+.empty{padding:40px 24px;text-align:center;color:var(--muted);line-height:1.5}
+.empty .ico{width:64px;height:64px;border-radius:50%;background:var(--lav);display:grid;place-items:center;margin:0 auto 12px;color:var(--purple);font-size:28px}
+.empty b{display:block;color:var(--text);font-size:15px;margin-bottom:4px}
+.pbtn{background:var(--purple);color:#fff;font-weight:800;border-radius:8px;padding:12px 16px;font-size:14px}
+.obtn{border:1px solid var(--purple);color:var(--purple);font-weight:800;border-radius:8px;padding:11px 16px;font-size:14px;background:#fff}
+
+/* product page */
+.topbar{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:5}
+.topbar .t{font-weight:800;font-size:15px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar svg{width:22px;height:22px}
+.pimg{aspect-ratio:1/1;display:grid;place-items:center;position:relative}
+.pimg svg{width:70%;height:70%}
+.pimg .ribbon{position:absolute;left:12px;top:12px}
+.psec{padding:12px 14px;border-bottom:6px solid #F3F2F8}
+.pname{font-size:15px;color:var(--muted);margin:0 0 6px;line-height:1.35}
+.pprice{display:flex;align-items:baseline;gap:8px}
+.pprice b{font-size:24px;font-weight:800}
+.hsbox{border:1px solid #E7CFE3;background:#FCF6FB;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.hsrow{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;font-size:13px;line-height:1.4}
+.hsrow .i{width:28px;height:28px;border-radius:50%;background:#fff;border:1px solid #E7CFE3;display:grid;place-items:center;color:var(--purple);font-weight:800}
+.hsrow b{display:block;font-size:13.5px}
+.hsrow span{color:var(--muted)}
+.bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--timer)}
+.sticky{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sticky.one{grid-template-columns:auto 1fr;align-items:center}
+
+/* checkout */
+.stepper{display:flex;justify-content:space-between;padding:12px 22px 10px;border-bottom:1px solid var(--line);position:relative}
+.stepper div{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;color:var(--muted);z-index:1;background:#fff;padding:0 4px}
+.stepper i{width:18px;height:18px;border-radius:50%;border:2px solid #C9C6D6;background:#fff;display:grid;place-items:center;font-style:normal;font-size:10px;color:#fff}
+.stepper .on i{background:var(--purple);border-color:var(--purple)}
+.stepper .on{color:var(--text);font-weight:700}
+.stepper::before{content:"";position:absolute;left:40px;right:40px;top:20px;height:2px;background:#E1DEEA}
+.ciitem{display:grid;grid-template-columns:72px 1fr;gap:12px}
+.ciitem .th{width:72px;height:80px;border-radius:6px;display:grid;place-items:center}
+.ciitem .th svg{width:80%;height:80%}
+.addr{font-size:13px;line-height:1.45}
+.radio{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:8px;width:100%;text-align:left;font-weight:700}
+.radio + .radio{margin-top:8px}
+.radio i{width:18px;height:18px;border-radius:50%;border:2px solid #B7B4C4;flex-shrink:0}
+.radio.on{border-color:var(--purple);background:#FCF6FB}
+.radio.on i{border:5px solid var(--purple)}
+.radio small{display:block;font-weight:500;color:var(--muted);font-size:12px}
+.prow{display:flex;justify-content:space-between;padding:6px 0;font-size:13.5px}
+.prow.tot{border-top:1px solid var(--line);margin-top:6px;padding-top:10px;font-weight:800;font-size:15px}
+.stitle{font-weight:800;font-size:14px;margin:0 0 10px}
+.muted{color:var(--muted)}
+.gtxt{color:var(--green);font-weight:700}
+
+/* confirmed & orders */
+.done{padding:40px 24px 24px;text-align:center}
+.done .ok{width:72px;height:72px;border-radius:50%;background:var(--green);color:#fff;font-size:36px;display:grid;place-items:center;margin:0 auto 14px}
+.done h2{margin:0 0 6px;font-size:20px}
+.ocard{border:1px solid var(--line);border-radius:10px;padding:12px;margin:12px 14px}
+.track{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column}
+.track li{display:grid;grid-template-columns:18px 1fr;gap:10px;font-size:12.5px;position:relative;padding-bottom:12px;color:var(--muted)}
+.track li::before{content:"";width:12px;height:12px;border-radius:50%;border:2px solid #C9C6D6;background:#fff;margin:2px 0 0 1px;z-index:1}
+.track li::after{content:"";position:absolute;left:7px;top:14px;bottom:0;width:2px;background:#E1DEEA}
+.track li:last-child::after{display:none}
+.track li.ok{color:var(--text);font-weight:700}
+.track li.ok::before{background:var(--green);border-color:var(--green)}
+.track li.ok::after{background:var(--green)}
+.track li.warn::before{background:var(--timer);border-color:var(--timer)}
+.note{font-size:12px;border-radius:6px;padding:8px 10px;margin-top:8px;line-height:1.4}
+.note.w{background:var(--timer-bg);color:var(--timer)}
+.note.r{background:#FDECEC;color:var(--red)}
+.note.g{background:var(--green-bg);color:var(--green)}
+
+/* categories */
+.catwrap{display:grid;grid-template-columns:92px 1fr;min-height:100%}
+.catside{background:#F6F5FA}
+.catside div{padding:14px 6px;text-align:center;font-size:12px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:6px}
+.catside div.on{background:#fff;color:var(--purple);font-weight:800;border-left:3px solid var(--purple)}
+.catside .c{width:44px;height:44px;border-radius:50%;background:var(--circle);display:grid;place-items:center}
+.catside .c svg{width:32px;height:32px}
+.catmain{padding:10px 12px}
+.catmain h3{font-size:12px;letter-spacing:.06em;color:var(--muted);margin:4px 0 10px;font-weight:700}
+.catmain h4{font-size:16px;margin:10px 0}
+.cg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 8px}
+.cg .cat .c{width:64px;height:64px;background:#F3F2F8}
+.cg .cat .c.hs{background:linear-gradient(135deg,var(--purple-dk),var(--purple));color:#fff;font-weight:800;font-size:22px}
+
+/* sheet */
+.scrim{position:absolute;inset:0;background:rgba(20,10,25,.45);z-index:20;display:flex;align-items:flex-end}
+.sheet{background:#fff;width:100%;border-radius:16px 16px 0 0;padding:18px 16px 24px;max-height:85%;overflow-y:auto}
+.sheet h3{margin:0 0 4px;font-size:17px}
+.pinopt{display:flex;justify-content:space-between;align-items:center;width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;margin-top:8px;text-align:left}
+.pinopt.on{border-color:var(--purple);background:#FCF6FB}
+.pinopt small{color:var(--muted);display:block;font-size:12px}
+.zone{font-size:11px;font-weight:800;border-radius:10px;padding:2px 8px}
+.zone.in{background:var(--green-bg);color:var(--green)}
+.zone.out{background:#F1F0F5;color:var(--muted)}
+.pininput{display:flex;gap:8px;margin-top:12px}
+.pininput input{flex:1;min-width:0;border:1px solid #C9C6D6;border-radius:8px;padding:10px;font:inherit}
+
+/* ---------- hub app ---------- */
+.hubmode .content{background:var(--hub-bg)}
+.hubtop{background:var(--hub);color:#fff;padding:6px 16px 14px}
+.hubtop .l1{display:flex;align-items:center;gap:10px}
+.hublogo{width:34px;height:34px;border-radius:8px;background:var(--hub-acc);color:var(--hub);display:grid;place-items:center;font-weight:900}
+.hubtop .nm{font-weight:800;font-size:16px}
+.hubtop .sub{font-size:12px;opacity:.75}
+.daybox{margin-left:auto;text-align:right;font-size:11px;opacity:.9}
+.daybox b{display:block;font-size:14px}
+.daybtn{margin-top:4px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:800}
+.htabs{display:grid;grid-template-columns:repeat(4,1fr);background:var(--hub2)}
+.htabs button{color:rgba(255,255,255,.7);padding:10px 2px;font-size:11.5px;font-weight:700;border-bottom:3px solid transparent;display:flex;flex-direction:column;align-items:center;gap:2px}
+.htabs button b{font-size:16px;color:#fff}
+.htabs button.on{color:#fff;border-bottom-color:var(--hub-acc)}
+.hlist{padding:12px;display:flex;flex-direction:column;gap:10px}
+.hcard{background:#fff;border-radius:10px;border:1px solid #DCE3E8;padding:12px;display:grid;grid-template-columns:56px 1fr;gap:10px}
+.hcard .th{width:56px;height:56px;border-radius:8px;display:grid;place-items:center}
+.hcard .th svg{width:80%;height:80%}
+.hcard .awb{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--muted)}
+.hcard .n{font-weight:800;font-size:13.5px;margin:2px 0}
+.hcard .meta{font-size:12px;color:var(--muted);line-height:1.4}
+.hcard .acts{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
+.hbtn{background:var(--hub);color:#fff;border-radius:7px;padding:9px 12px;font-weight:800;font-size:12.5px}
+.hbtn.alt{background:#fff;color:var(--hub);border:1px solid #B9C6CF}
+.hbtn.warn{background:#fff;color:var(--red);border:1px solid #F0C4C6}
+.hbtn:disabled{opacity:.4;cursor:not-allowed}
+.st{font-size:10.5px;font-weight:800;border-radius:4px;padding:2px 6px;text-transform:uppercase;letter-spacing:.04em}
+.st.listed{background:#E3F1FA;color:#1A6A96}
+.st.sold{background:#FFF2D6;color:#9A6400}
+.st.ofd{background:#EDE6FB;color:#5B3CC4}
+.st.ok{background:var(--green-bg);color:var(--green)}
+.st.rto{background:#FDECEC;color:var(--red)}
+.hbar{height:6px;background:#E1E7EB;border-radius:3px;overflow:hidden;margin-top:6px}
+.hbar i{display:block;height:100%;background:var(--hub-acc)}
+.hbar.late i{background:var(--red)}
+.hsec{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:4px 2px 0}
+.check{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);width:100%;text-align:left;font-size:13px;line-height:1.4}
+.check i{width:20px;height:20px;border-radius:4px;border:2px solid #9FB0BB;flex-shrink:0;display:grid;place-items:center;font-style:normal;color:#fff;font-size:12px}
+.check.on i{background:var(--hub);border-color:var(--hub)}
+.check small{display:block;color:var(--muted);font-size:12px}
+.zonebox{background:#fff;border:1px solid #DCE3E8;border-radius:10px;padding:12px;font-size:12.5px;line-height:1.5}
+.zonebox b{font-size:13px}
+
+/* ---------- responsive ---------- */
+@media (max-width: 780px){
+  .wrap{flex-direction:column;align-items:center;gap:20px;padding-top:16px}
+  .guide{position:static;order:2;width:100%;max-width:430px}
+  .phone{order:1}
+}
+@media (max-width: 440px){
+  .wrap{padding-left:0;padding-right:0}
+  .guide{padding:0 16px}
+  .phone{width:100%;height:calc(100dvh - 20px);padding:0;border-radius:0;box-shadow:none;background:none}
+  .screen{border-radius:0}
+}
+@media (prefers-reduced-motion: reduce){ .toast{transition:none} }
+</style>
+
+<div class="wrap">
+  <aside class="guide">
+    <div>
+      <span class="tag">Concept prototype · DICE S3</span>
+      <h1>Hypersale</h1>
+      <p>Undelivered (RTO) orders stay at the local Valmo hub for up to 7 days and are resold to nearby customers at the original listing price, with 1–2 day delivery. Sample data only. This is not the live Meesho app.</p>
+    </div>
+    <div class="switch" role="tablist" aria-label="Which app to show">
+      <button id="sw-customer" data-act="app" data-v="customer">Customer app</button>
+      <button id="sw-hub" data-act="app" data-v="hub">Valmo hub app</button>
+    </div>
+    <div class="panel">
+      <h2>Try the full loop</h2>
+      <ol class="steps" id="steps"></ol>
+    </div>
+    <div class="panel">
+      <h2>Live state</h2>
+      <div id="state"></div>
+    </div>
+    <div class="btn-row">
+      <button class="gbtn" data-act="pinsheet">Change pincode</button>
+      <button class="gbtn" data-act="reset">Reset demo</button>
+    </div>
+  </aside>
+
+  <div class="phone">
+    <div class="screen" id="screen">
+      <div class="sbar"><span>3:19</span><span class="ic">▂▄▆ ◠ <span class="batt">34</span></span></div>
+      <div class="content" id="content"></div>
+      <nav class="bnav" id="bnav"></nav>
+      <div id="overlay"></div>
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   CONFIG — change these in one place
+   ========================================================= */
+const HOLD_DAYS = 7;          // max days an RTO unit is held at the hub
+const MAX_ATTEMPTS = 2;       // Hypersale delivery attempts before return to seller
+const EXPRESS_FEE = 15;       // customer express fee shown at checkout (₹)
+const SELLER_FEE = 20;        // seller fee on a Hypersale resale (₹), shown in hub app
+const HUB = { name: "Valmo LMDC · Chennai South", short: "Chennai South hub" };
+const ZONE = {                // pincodes served by this hub = geofence
+  "600036": "Chennai City Corporation",
+  "600020": "Adyar, Chennai",
+  "600025": "Guindy, Chennai",
+  "600042": "Velachery, Chennai"
+};
+const OTHER_PINS = { "600001": "Parrys, Chennai", "110001": "Connaught Place, New Delhi" };
+
+/* =========================================================
+   ART — simple product illustrations (no external images)
+   ========================================================= */
+const ART = {
+  balm:(c)=>`<svg viewBox="0 0 100 100"><rect x="38" y="10" width="24" height="10" rx="2" fill="#F3B8C8"/><path d="M36 20h28l-4 66a4 4 0 0 1-4 4H44a4 4 0 0 1-4-4z" fill="${c}"/><text x="50" y="58" font-size="6" text-anchor="middle" fill="#fff" font-family="serif" font-style="italic">Lip Balm</text></svg>`,
+  lipstick:(c)=>`<svg viewBox="0 0 100 100"><rect x="40" y="46" width="20" height="44" rx="3" fill="#2C2C34"/><rect x="42" y="36" width="16" height="12" fill="#C8C8D0"/><path d="M43 36V18l14-8v26z" fill="${c}"/></svg>`,
+  kurti:(c)=>`<svg viewBox="0 0 100 100"><path d="M36 10l-18 12 6 18 10-4v54h32V36l10 4 6-18-18-12c-2 6-8 10-14 10s-12-4-14-10z" fill="${c}"/><circle cx="50" cy="44" r="3" fill="#fff" opacity=".7"/><circle cx="42" cy="60" r="3" fill="#fff" opacity=".7"/><circle cx="58" cy="60" r="3" fill="#fff" opacity=".7"/><circle cx="50" cy="76" r="3" fill="#fff" opacity=".7"/></svg>`,
+  saree:(c)=>`<svg viewBox="0 0 100 100"><path d="M24 20h52v64H24z" fill="${c}"/><path d="M24 70h52v14H24z" fill="#E8B64A"/><path d="M24 24h52" stroke="#E8B64A" stroke-width="4"/><path d="M34 36l6 8 6-8 6 8 6-8 6 8" stroke="#fff" stroke-width="2" fill="none" opacity=".6"/></svg>`,
+  shoes:(c)=>`<svg viewBox="0 0 100 100"><path d="M12 62c0-10 8-22 18-22 4 0 6 6 14 8 8 2 20 2 30 8 8 4 14 8 14 14v4H12z" fill="${c}"/><path d="M12 74h76v6H12z" fill="#fff" stroke="#ccc"/><path d="M40 50l6 4M46 46l6 4M52 44l6 4" stroke="#fff" stroke-width="2"/></svg>`,
+  tawa:(c)=>`<svg viewBox="0 0 100 100"><ellipse cx="44" cy="56" rx="34" ry="30" fill="${c}"/><ellipse cx="44" cy="54" rx="26" ry="22" fill="#44444C"/><rect x="74" y="50" width="22" height="8" rx="4" fill="#8B5A2B"/></svg>`,
+  jhumka:(c)=>`<svg viewBox="0 0 100 100"><g fill="${c}"><circle cx="34" cy="22" r="6"/><circle cx="66" cy="22" r="6"/><path d="M20 58a14 14 0 0 1 28 0z"/><path d="M52 58a14 14 0 0 1 28 0z"/><rect x="32" y="28" width="4" height="16"/><rect x="64" y="28" width="4" height="16"/></g><g fill="#B9B9C4"><circle cx="22" cy="64" r="3"/><circle cx="30" cy="66" r="3"/><circle cx="38" cy="66" r="3"/><circle cx="46" cy="64" r="3"/><circle cx="54" cy="64" r="3"/><circle cx="62" cy="66" r="3"/><circle cx="70" cy="66" r="3"/><circle cx="78" cy="64" r="3"/></g></svg>`,
+  frock:(c)=>`<svg viewBox="0 0 100 100"><path d="M38 12h24l2 20H36z" fill="${c}"/><path d="M36 32h28l18 54H18z" fill="${c}"/><path d="M36 32h28" stroke="#fff" stroke-width="4"/><circle cx="36" cy="60" r="4" fill="#FFE27A"/><circle cx="60" cy="70" r="4" fill="#FFE27A"/><circle cx="48" cy="52" r="4" fill="#FFE27A"/></svg>`,
+  shirt:(c)=>`<svg viewBox="0 0 100 100"><path d="M36 12l-20 12 6 18 10-4v50h36V38l10 4 6-18-20-12-14 10z" fill="${c}"/><path d="M50 22v66" stroke="#fff" stroke-width="2" opacity=".6"/><path d="M36 12l14 10 14-10" stroke="#fff" stroke-width="3" fill="none"/></svg>`,
+  bottle:(c)=>`<svg viewBox="0 0 100 100"><rect x="42" y="8" width="16" height="14" rx="2" fill="#333"/><rect x="32" y="22" width="36" height="70" rx="8" fill="${c}"/><rect x="38" y="44" width="24" height="26" rx="2" fill="#fff" opacity=".8"/></svg>`,
+  person:(c)=>`<svg viewBox="0 0 100 100"><circle cx="50" cy="30" r="14" fill="#E9B98E"/><path d="M22 96c0-24 12-40 28-40s28 16 28 40z" fill="${c}"/></svg>`,
+  basket:(c)=>`<svg viewBox="0 0 100 100"><circle cx="36" cy="46" r="12" fill="#D8303A"/><circle cx="56" cy="42" r="12" fill="#7BB33A"/><circle cx="68" cy="50" r="11" fill="#D8303A"/><path d="M16 56h68l-8 30H24z" fill="${c}"/></svg>`,
+  cooker:(c)=>`<svg viewBox="0 0 100 100"><rect x="22" y="40" width="56" height="44" rx="8" fill="${c}"/><rect x="28" y="30" width="44" height="10" rx="3" fill="#44444C"/><rect x="46" y="18" width="8" height="12" fill="#44444C"/><rect x="78" y="34" width="18" height="6" rx="3" fill="#44444C"/></svg>`
+};
+const BG = ["#FCEFF3","#F1F4FC","#FDF3E6","#EEF7F1","#F5EFFA","#F7F2EE"];
+/* Free-licence product photos from Pexels (pexels.com/license). Loaded online; the drawn illustration shows if a photo can't load. */
+const PX = id => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=420&h=460&fit=crop`;
+function pic(p, cls){ return `<div class="${cls} ph" style="background:${BG[p.bg]}">${ART[p.art](p.c)}${p.img?`<img src="${PX(p.img)}" alt="${p.name}" loading="lazy" onerror="this.remove()">`:""}</div>`; }
+
+/* catalog */
+const CATALOG = {
+  p1:{img:374638,name:"Kiss Kandy Tinted Lip Balm, Cherry",cat:"Beauty",price:136,mrp:149,rate:4.3,rev:"42,263",art:"balm",c:"#E24A77",bg:0,mall:true,timer:true},
+  p2:{img:27525348,name:"Matte Liquid Lipstick 18L",cat:"Beauty",price:116,mrp:160,rate:4.1,rev:"8,902",art:"lipstick",c:"#C8102E",bg:0,mall:true,timer:true,ad:true},
+  p3:{img:19556879,name:"Women Rayon Printed Anarkali Kurti",cat:"Kurtis",price:389,mrp:999,rate:4.0,rev:"12,548",art:"kurti",c:"#2F5DA8",bg:1},
+  p4:{img:1435909,name:"Non-Stick Dosa Tawa 28 cm",cat:"Kitchen",price:299,mrp:699,rate:4.2,rev:"6,331",art:"tawa",c:"#2B2B33",bg:2},
+  p5:{img:11203816,name:"Oxidised Silver Jhumka Earrings",cat:"Jewellery",price:149,mrp:399,rate:4.1,rev:"19,870",art:"jhumka",c:"#8E8E9B",bg:4},
+  p6:{img:17113983,name:"Cotton Silk Saree with Blouse Piece",cat:"Saree",price:499,mrp:1299,rate:3.9,rev:"9,104",art:"saree",c:"#B31B4B",bg:0},
+  p7:{img:1456733,name:"Men's Mesh Running Shoes",cat:"Footwear",price:449,mrp:999,rate:4.0,rev:"5,672",art:"shoes",c:"#2D6CDF",bg:1},
+  p8:{img:1213558,name:"Matte Lipstick Combo, Set of 3",cat:"Beauty",price:179,mrp:499,rate:4.0,rev:"3,210",art:"lipstick",c:"#8E1F4A",bg:5},
+  p9:{img:36893900,name:"Girls Cotton Floral Frock",cat:"Kids",price:259,mrp:599,rate:4.2,rev:"7,745",art:"frock",c:"#F08BB3",bg:3},
+  p10:{img:15996635,name:"Men Slim Fit Checked Shirt",cat:"Men",price:329,mrp:899,rate:4.0,rev:"11,093",art:"shirt",c:"#3C7A6A",bg:3},
+  p11:{img:16378451,name:"Aloe Vera Face Wash 100 ml",cat:"Beauty",price:118,mrp:199,rate:4.1,rev:"2,870",art:"bottle",c:"#5BAA5F",bg:3}
+};
+const FEED = ["p1","p2","p3","p10","p6","p9","p5","p11"];
+
+/* ---- Hypersale stock: ~500 RTO pieces collected over the last 7 days ---- */
+const WEEKLY_PIECES = 500;   // pieces held on the shelf at steady state (one week of RTOs)
+const DAILY_INFLOW = Math.round(WEEKLY_PIECES / HOLD_DAYS);  // new RTOs arriving each day in the demo
+function rng(seed){ return function(){ seed|=0; seed=seed+0x6D2B79F5|0; let t=Math.imul(seed^seed>>>15,1|seed); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+const TEMPL = [
+  ["kurti","Kurtis",["Rayon Printed Anarkali Kurti","Cotton Straight Kurti","Georgette Flared Kurti","Chikankari Kurta","Printed Kurta with Palazzo"],["#2F5DA8","#C2185B","#2E7D32","#B8860B","#6A1B9A"],[249,549],[20702674,35521738,28512787,28512776,30809730]],
+  ["saree","Sarees",["Cotton Silk Saree","Georgette Printed Saree","Kanjeevaram Style Saree","Chiffon Saree with Blouse"],["#B31B4B","#1B5E9B","#8E24AA","#C62828"],[349,799],[20161456,28058186,30004204,35586011]],
+  ["shoes","Footwear",["Men's Mesh Running Shoes","Women's Casual Sneakers","Kids Velcro Sports Shoes","Men's Canvas Sneakers"],["#2D6CDF","#E24A77","#F57C00","#37474F"],[299,649],[1456737,2529148,9485191,4271576]],
+  ["tawa","Kitchen",["Non-Stick Dosa Tawa 28 cm","Iron Kadai 24 cm","Stainless Steel Pan Set"],["#2B2B33","#5D4037"],[249,599],[1435909,null,4252147]],
+  ["cooker","Kitchen",["Aluminium Pressure Cooker 3 L","Steel Pressure Cooker 5 L"],["#9E9E9E","#B0BEC5"],[599,999],[35041646,35041643]],
+  ["jhumka","Jewellery",["Oxidised Silver Jhumka Earrings","Gold Plated Jhumka","Kundan Drop Earrings","Temple Jhumka Set"],["#8E8E9B","#C9A227","#B8860B"],[99,299],[20850030,13595577,2733490,35137273]],
+  ["frock","Kids",["Girls Cotton Floral Frock","Girls Party Wear Frock","Girls Casual Cotton Dress"],["#F08BB3","#7E57C2","#26A69A"],[199,449],[36893900,36046025,36046018]],
+  ["shirt","Men",["Men Slim Fit Checked Shirt","Men Cotton Casual Shirt","Men Solid Polo T-Shirt","Men Classic Polo T-Shirt"],["#3C7A6A","#1E3A8A","#8D6E63","#C62828"],[229,499],[3036513,15835597,17987935,17984122]],
+  ["lipstick","Beauty",["Creamy Matte Lipstick","Long-Stay Pink Lipstick","Tinted Lip Balm"],["#8E1F4A","#C8102E","#AD1457"],[99,249],[1213558,27525348,8129909]],
+  ["bottle","Beauty",["Gentle Face Wash 100 ml","Herbal Hair Oil 200 ml","Vitamin C Face Serum 30 ml"],["#5BAA5F","#6D4C41","#F9A825"],[119,299],[16378451,8709569,8101534]],
+  ["person","Western",["Women Floral Top","Women Lace Top","Women Casual Co-ord Set"],["#D8303A","#00897B","#5E35B1"],[199,449],[5457396,25913453,9444664]]
+];
+const HS_PIDS = [];
+(function(){
+  const rand = rng(28092026); let n = 0;
+  TEMPL.forEach(([art,cat,names,cols,[lo,hi],photos])=>{
+    names.forEach((nm,i)=>{
+      const id = "h" + (++n);
+      const price = Math.round((lo + rand()*(hi-lo))/10)*10 - 1;
+      const mrp = Math.round(price*(1.8+rand()*0.9)/10)*10 - 1;
+      const rev = Math.round(800 + rand()*24000);
+      CATALOG[id] = {img:photos[i]||null,name:nm,cat,price,mrp,rate:(3.8+rand()*0.6).toFixed(1),rev:rev.toLocaleString("en-IN"),art,c:cols[i%cols.length],bg:n%BG.length};
+      HS_PIDS.push(id);
+    });
+  });
+})();
+function makeUnits(count, startSeq, heldFor, status, rand){
+  const out=[];
+  const reasons=["Customer refused at door","Customer unreachable after 3 attempts","Address not found","Customer refused at door","Customer asked to cancel at door"];
+  for(let i=0;i<count;i++){
+    const k=startSeq+i;
+    out.push({id:"u"+k,pid:HS_PIDS[Math.floor(rand()*HS_PIDS.length)],awb:"VL77"+String(30000000+k*7919).slice(-8),
+      reason:reasons[Math.floor(rand()*reasons.length)],status,held:heldFor(i),attempts:0,bin:status==="listed"?binName(k):undefined});
+  }
+  return out;
+}
+
+/* =========================================================
+   STATE
+   ========================================================= */
+function seed(){
+  return {
+    app:"customer", screen:"home", tab:"all", pid:null, uid:null,
+    pincode:"600036", day:0, pay:"upi", hubTab:"rto", qc:null, sheet:null,
+    hpid:null, hsCat:"All", hsShow:24, hubShow:20,
+    orders:[], seq:1,
+    units:[
+      // three fresh RTOs arriving at the hub today (walk one through the check by hand)
+      {id:"u1",pid:"p3",awb:"VL7730152281",reason:"Customer refused at door",status:"rto",held:0,attempts:0},
+      {id:"u2",pid:"p4",awb:"VL7730158840",reason:"Customer unreachable after 3 attempts",status:"rto",held:0,attempts:0},
+      {id:"u3",pid:"p5",awb:"VL7730160193",reason:"Customer refused at door",status:"rto",held:0,attempts:0},
+      // ~500 pieces already on the Hypersale shelf, spread across the last 7 days
+      ...makeUnits(WEEKLY_PIECES, 1, i=>i%HOLD_DAYS, "listed", rng(7))
+    ],
+    nextBin:WEEKLY_PIECES+1, seqU:WEEKLY_PIECES+10,
+    did:{flag:false,browse:false,buy:false,deliver:false,geo:false}
+  };
+}
+let S = seed();
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+const $ = s => document.querySelector(s);
+const inr = n => "₹" + n.toLocaleString("en-IN");
+const off = p => Math.round((1 - p.price/p.mrp)*100);
+const inZone = () => !!ZONE[S.pincode];
+const pinName = pin => ZONE[pin] || OTHER_PINS[pin] || "Pincode " + pin;
+const unit = id => S.units.find(u=>u.id===id);
+const listed = () => S.units.filter(u=>u.status==="listed");
+function today(){ const d=new Date(); d.setDate(d.getDate()+S.day); return d; }
+const WD=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"], MO=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function fmt(d){ return `${WD[d.getDay()]}, ${d.getDate()} ${MO[d.getMonth()]}`; }
+function plus(n){ const d=today(); d.setDate(d.getDate()+n); return d; }
+const etaText = () => "Get it by " + fmt(plus(2));
+const left = u => HOLD_DAYS - u.held;
+function binName(n){ return "HS-" + String.fromCharCode(65+Math.floor((n-1)/100)%26) + "-" + String((n-1)%100+1).padStart(2,"0"); }
+/* group listed pieces by product, soonest-to-expire first */
+function groups(){
+  const m={};
+  listed().forEach(u=>{ (m[u.pid]=m[u.pid]||[]).push(u); });
+  Object.values(m).forEach(a=>a.sort((x,y)=>left(x)-left(y)));
+  return m;
+}
+function thumb(p,cls="th"){ return pic(p,cls); }
+let tt;
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove("show"),2200); }
+
+const IC = {
+  heart:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>`,
+  cart:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 4h2l2.4 11h10.2L20 7H6.2"/><circle cx="9" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/></svg>`,
+  back:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5l-7 7 7 7"/></svg>`,
+  search:`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4-4"/></svg>`,
+  pin:`<svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 22s7-7.5 7-12.5A7 7 0 0 0 5 9.5C5 14.5 12 22 12 22z" fill="#4E8DF5"/><circle cx="12" cy="9.5" r="2.6" fill="#fff"/></svg>`,
+  home:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 11l8-6 8 6v9H4z"/><path d="M9 20v-5h6v5"/></svg>`,
+  homeOn:`<svg viewBox="0 0 24 24"><path d="M3.5 11L12 4.5 20.5 11z" fill="#E24A2B"/><rect x="5" y="11" width="14" height="9" fill="#9F2089"/><text x="12" y="18.5" font-size="7" text-anchor="middle" fill="#fff" font-weight="800">m</text></svg>`,
+  cats:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8 4l-4 3 2 3 2-1v11h8V9l2 1 2-3-4-3-2 2h-4z"/></svg>`,
+  catsOn:`<svg viewBox="0 0 24 24"><path d="M8 4l-4 3 2 3 2-1v11h8V9l2 1 2-3-4-3-2 2h-4z" fill="#5B8DEF"/></svg>`,
+  mall:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l2.4 2 3.1-.3.7 3 2.6 1.8-1.2 2.9 1.2 2.9-2.6 1.8-.7 3-3.1-.3L12 21l-2.4-2-3.1.3-.7-3L3.2 14.5l1.2-2.9-1.2-2.9L5.8 7l.7-3 3.1.3z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>`,
+  video:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M10 9.5v5l4.5-2.5z"/></svg>`,
+  orders:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l8 4v10l-8 4-8-4V7z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg>`
+};
+
+/* =========================================================
+   CUSTOMER SCREENS
+   ========================================================= */
+function productCard(pid, g){
+  const p = CATALOG[pid]; const u = g && g[0];
+  const pills = u
+    ? `<span class="pill hs">⚡ Hypersale</span><span class="pill timer">${g.length<=3?'Only '+g.length+' left':g.length+' left'}</span>`
+    : `${p.mall?'<span class="pill mall">✔ Mall</span>':''}${p.timer?'<span class="pill timer">◷ 8h : 40m : 50s</span>':''}`;
+  return `<button class="card" data-act="${u?'openG':'openP'}" data-v="${pid}">
+    ${pic(p,"img")}
+    <div class="pills">${pills}</div>
+    <div class="nm">${p.ad&&!u?'<span style="border:1px solid #bbb;border-radius:3px;padding:0 3px;font-size:10px;margin-right:4px">Ad</span>':''}${p.name}</div>
+    <div class="pr"><b>${inr(p.price)}</b><s>${p.mrp}</s><span class="off">${off(p)}% off</span></div>
+    ${u?`<div class="eta">${etaText()}</div>`:`<div class="offer">${inr(Math.round(p.price*.82))} with 1 Special Offer</div>`}
+    <div class="rate"><span>${p.rate} ★</span>(${p.rev})</div>
+  </button>`;
+}
+
+function homeHeader(){
+  return `
+  <div class="hhead">
+    <div class="avatar">${ART.person("#3E6FB0")}</div>
+    <div class="refer">🎁 Refer and Earn</div>
+    <div class="hicons"><span style="font-weight:800;color:#C33;font-size:13px">अ<sub style="color:#6a4bd6">A</sub></span>${IC.heart}<span data-act="toast" data-v="Cart isn't part of this prototype">${IC.cart}</span></div>
+  </div>
+  <div class="search">${IC.search} Search by Keyword or Product ID <span class="r">🎙 📷</span></div>
+  <button class="pin" data-act="pinsheet">${IC.pin} Delivering to <b>${pinName(S.pincode)} - ${S.pincode}</b> ›</button>
+  <div class="tabs" role="tablist">
+    <button class="${S.tab==='all'?'on':''}" data-act="tab" data-v="all">All</button>
+    <button data-act="toast" data-v="SuperSaver isn't part of this prototype">SuperSaver</button>
+    <button class="hs ${S.tab==='hs'?'on':''}" data-act="tab" data-v="hs">⚡ Hypersale <span class="new">NEW</span></button>
+    <button data-act="toast" data-v="Fashion isn't part of this prototype">Fashion</button>
+  </div>`;
+}
+
+function scrHome(){
+  if (S.tab==="hs") return homeHeader() + hsLanding();
+  const cats=[["All Categories","shirt","#4E8DF5",28512776],["Kurtis & Dr…","kurti","#2F5DA8",19556879],["Kids","frock","#F08BB3",36893900],["Home","cooker","#B33",8166777],["Beauty","lipstick","#C8102E",1213558],
+              ["Kitchen Util…","tawa","#2B2B33",4252147],["Saree","saree","#B31B4B",17113983],["Western W…","person","#D8303A",5457396],["Jewellery","jhumka","#B8860B",13595577],["Men Fashion","shirt","#3C7A6A",3036513]];
+  const n = listed().length;
+  return homeHeader() + `
+  <div class="cats">${cats.map(c=>`<div class="cat"><div class="c ph">${ART[c[1]](c[2])}<img src="${PX(c[3])}" alt="" loading="lazy" onerror="this.remove()"></div>${c[0]}</div>`).join("")}</div>
+  ${inZone() && n ? `<button class="hsbanner" data-act="tab" data-v="hs">
+      <div><div class="t">⚡ Hypersale</div><div class="s">${n} deals already in your city · Get them in 1–2 days</div></div><span class="go">→</span></button>` : ""}
+  <div class="salebanner"><div><div class="a">SALE COMING SOON</div><div class="b">◀ UPTO 80% OFF ▶</div></div><div class="d"><small>OCT</small>09</div></div>
+  <div class="fbar"><div>⇅ Sort</div><div>Category ⌄</div><div>Gender ⌄</div><div>☰ Filters</div></div>
+  <div class="grid">${FEED.map(p=>productCard(p)).join("")}</div>`;
+}
+
+function hsLanding(){
+  if (!inZone()){
+    return `<div class="empty"><div class="ico">⚡</div><b>Hypersale isn't available at ${S.pincode} yet</b>
+      Hypersale shows items held at a Valmo hub near your pincode, so the deals you see depend on where you are.
+      <div style="margin-top:16px"><button class="pbtn" data-act="pinsheet">Change pincode</button></div></div>`;
+  }
+  const G = groups();
+  const cats = ["All",...new Set(Object.keys(G).map(k=>CATALOG[k].cat))];
+  let keys = Object.keys(G).filter(k=>S.hsCat==="All"||CATALOG[k].cat===S.hsCat);
+  keys.sort((a,b)=>left(G[a][0])-left(G[b][0]));
+  const pieces = keys.reduce((n,k)=>n+G[k].length,0);
+  const shown = keys.slice(0,S.hsShow);
+  return `
+  <div class="hshero">
+    <h2>⚡ Hypersale</h2>
+    <p>Brand-new products already sitting in your city. No long wait: order today, get it in 1–2 days.</p>
+    <div class="chips"><span>✓ Brand-new, never used</span><span>⚡ 1–2 day delivery</span><span>🔒 Pay online</span></div>
+  </div>
+  <div class="tabs" style="padding-top:12px">${cats.map(c=>`<button class="${S.hsCat===c?'on':''}" data-act="hscat" data-v="${c}">${c}</button>`).join("")}</div>
+  <div class="hsinfo"><span>${pieces} deals near you</span><span>Fresh deals every day</span></div>
+  ${shown.length ? `<div class="grid">${shown.map(k=>productCard(k,G[k])).join("")}</div>
+     ${keys.length>shown.length?`<div style="padding:16px;text-align:center" class="muted" data-more="hs">Loading more…</div>`:`<div style="padding:16px;text-align:center;font-size:12px" class="muted">You've seen all ${pieces} local pieces</div>`}`
+     : `<div class="empty"><div class="ico">⚡</div><b>All local deals are gone</b>New Hypersale pieces appear as they arrive at your hub. Check back tomorrow.</div>`}`;
+}
+
+function scrProduct(){
+  const g = S.hpid ? (groups()[S.hpid]||[]) : null;
+  const u = g ? (g[0] || {held:HOLD_DAYS}) : null;
+  const p = CATALOG[S.hpid || S.pid];
+  const avail = g && g.length>0 && inZone();
+  const pct = u ? Math.min(100, u.held/HOLD_DAYS*100) : 0;
+  return `
+  <div class="topbar"><button data-act="back" aria-label="Back">${IC.back}</button><span class="t">${p.name}</span>${IC.search}${IC.heart}${IC.cart}</div>
+  <div class="pimg ph" style="background:${BG[p.bg]}">${ART[p.art](p.c)}${p.img?`<img src="${PX(p.img)}" alt="${p.name}" onerror="this.remove()">`:""}${u?'<span class="ribbon pill hs" style="z-index:2">⚡ Hypersale</span>':''}</div>
+  <div class="psec">
+    <p class="pname">${p.name}</p>
+    <div class="pprice"><b>${inr(p.price)}</b><s class="muted">${inr(p.mrp)}</s><span class="gtxt">${off(p)}% off</span></div>
+    ${u?`<div class="muted" style="font-size:12px;margin-top:4px">Same price as the original listing</div>`:`<div class="offer" style="padding:4px 0 0">${inr(Math.round(p.price*.82))} with 1 Special Offer</div>`}
+    <div class="rate" style="padding:8px 0 0"><span>${p.rate} ★</span>${p.rev} ratings</div>
+  </div>
+  ${u ? `<div class="psec"><div class="hsbox">
+      <div class="hsrow"><div class="i">⚡</div><div><b>${avail?etaText():"No longer available"}</b><span>${avail?`It's already in your city, so it reaches ${S.pincode} in 1–2 days instead of a week.`:"All the pieces near you have been snapped up. Check back tomorrow for new deals."}</span></div></div>
+      <div class="hsrow"><div class="i">✓</div><div><b>Brand-new, never used</b><span>Someone nearby ordered this but it never reached them. We checked it and packed it fresh for you.</span></div></div>
+      <div class="hsrow"><div class="i">₹</div><div><b>Same price, paid online</b><span>You pay the regular listing price by UPI. Cash on Delivery isn't available on Hypersale.</span></div></div>
+      <div class="hsrow"><div class="i">${avail?g.length:0}</div><div><b>${avail?(g.length<=3?`Hurry, only ${g.length} left near you`:`${g.length} left near you`):'Sold out near you'}</b>
+        <div class="bar" style="margin-top:6px"><i style="width:${pct}%"></i></div></div></div>
+    </div></div>` : `<div class="psec"><div class="hsrow"><div class="i" style="border-color:var(--line)">🚚</div><div><b>Free Delivery</b><span>Delivery in 6–10 days</span></div></div></div>`}
+  <div class="psec"><div class="stitle">Product details</div><div class="muted" style="font-size:13px;line-height:1.5">Category: ${p.cat}<br>Sold by: Shree Balaji Traders</div></div>
+  <div class="sticky">
+    <button class="obtn" data-act="${avail?'buy':'toast'}" data-v="${avail?'':'Only Hypersale items check out in this prototype'}">Add to Cart</button>
+    <button class="pbtn" data-act="${avail?'buy':'toast'}" data-v="${avail?'':'Only Hypersale items check out in this prototype'}" ${u&&!avail?'disabled style="opacity:.4"':''}>Buy Now</button>
+  </div>`;
+}
+
+function scrCheckout(){
+  const u = unit(S.uid), p = CATALOG[u.pid];
+  const total = p.price + EXPRESS_FEE;
+  return `
+  <div class="topbar"><button data-act="back" aria-label="Back">${IC.back}</button><span class="t">Cart</span></div>
+  <div class="stepper"><div class="on"><i>✓</i>Cart</div><div class="on"><i>✓</i>Address</div><div class="on"><i>✓</i>Payment</div><div class="on"><i>4</i>Summary</div></div>
+  <div class="psec">
+    <div class="ciitem">${thumb(p)}<div>
+      <div style="font-size:13px;line-height:1.35">${p.name}</div>
+      <div style="margin-top:4px"><b>${inr(p.price)}</b> <s class="muted" style="font-size:12px">${inr(p.mrp)}</s></div>
+      <div class="muted" style="font-size:12px;margin-top:2px">Qty: 1</div>
+      <span class="pill hs" style="margin-top:6px">⚡ Hypersale · ${etaText()}</span>
+    </div></div>
+  </div>
+  <div class="psec"><div class="stitle">Delivery address</div>
+    <div class="addr"><b>Kushal Mehta</b><br>Room 214, Hostel Zone, ${pinName(S.pincode)}<br>Chennai, Tamil Nadu - ${S.pincode}</div></div>
+  <div class="psec"><div class="stitle">Payment method</div>
+    <button class="radio on" data-act="pay" data-v="upi"><i></i><div>UPI (Pay online)<small>GPay, PhonePe, Paytm, any UPI app</small></div></button>
+    <div class="radio" style="opacity:.55;cursor:default"><i></i><div>Cash on Delivery<small>Not available for Hypersale orders</small></div></div>
+  </div>
+  <div class="psec"><div class="stitle">Price details (1 item)</div>
+    <div class="prow"><span>Product price</span><span>${inr(p.price)}</span></div>
+    <div class="prow"><span>Hypersale express delivery (1–2 days)</span><span>+${inr(EXPRESS_FEE)}</span></div>
+    <div class="prow tot"><span>Order total</span><span>${inr(total)}</span></div>
+  </div>
+  <div class="sticky one"><div><b style="font-size:17px">${inr(total)}</b><div class="muted" style="font-size:11px">View price details</div></div>
+    <button class="pbtn" data-act="place">Pay ${inr(total)} &amp; Place Order</button></div>`;
+}
+
+function scrConfirmed(){
+  const o = S.orders[S.orders.length-1], p = CATALOG[unit(o.uid).pid];
+  return `<div class="done"><div class="ok">✓</div><h2>Order placed</h2>
+    <div class="muted">Order #${o.no} · ${p.name}</div>
+    <div class="note g" style="margin:16px auto 0;max-width:280px;font-weight:700">⚡ Arriving by ${fmt(o.eta)}</div>
+    <p class="muted" style="font-size:13px;line-height:1.5;margin:14px 0 20px">Good news: it's already in your city, so it's on its way to you soon.</p>
+    <button class="pbtn" data-act="nav" data-v="orders">View my orders</button>
+    <div style="margin-top:10px"><button class="obtn" data-act="nav" data-v="home">Continue shopping</button></div></div>`;
+}
+
+const TRACK = ["Order placed","Packed and ready","Out for delivery","Delivered"];
+function scrOrders(){
+  if (!S.orders.length) return `<div class="topbar"><span class="t">My Orders</span></div>
+    <div class="empty"><div class="ico">📦</div><b>No orders yet</b>Buy something from Hypersale to see it here.</div>`;
+  return `<div class="topbar"><span class="t">My Orders</span></div>` + S.orders.slice().reverse().map(o=>{
+    const u = unit(o.uid), p = CATALOG[u.pid];
+    const stage = {sold:0,packed:1,ofd:2,delivered:3,returned:-1,expired:-1}[u.status];
+    let note = "";
+    if (u.status==="delivered") note = `<div class="note g">Delivered on ${fmt(today())}</div>`;
+    else if (u.status==="returned") note = `<div class="note r">We couldn't deliver this order after ${MAX_ATTEMPTS} attempts, so it was cancelled. Your refund of ${inr(o.total)} is on its way.</div>`;
+    else if (u.attempts>0) note = `<div class="note w">Delivery attempt ${u.attempts} of ${MAX_ATTEMPTS} failed. We'll try again, one attempt left.</div>`;
+    return `<div class="ocard">
+      <div class="ciitem">${thumb(p)}<div>
+        <span class="pill hs">⚡ Hypersale</span>
+        <div style="font-size:13px;margin-top:4px">${p.name}</div>
+        <div class="muted" style="font-size:12px">#${o.no} · ${inr(o.total)} · Paid via UPI</div>
+        ${u.status!=="delivered"&&u.status!=="returned"?`<div style="font-size:12px;font-weight:800;color:var(--purple);margin-top:2px">Arriving by ${fmt(o.eta)}</div>`:""}
+      </div></div>
+      ${stage>=0?`<ul class="track">${TRACK.map((t,i)=>`<li class="${i<=stage?'ok':''}">${t}</li>`).join("")}</ul>`:""}
+      ${note}</div>`;
+  }).join("");
+}
+
+function scrCategories(){
+  const side=[["Popular","star"],["Kurti, Saree & Lehenga","kurti"],["Women Western","person"],["Men","shirt"],["Kids & Toys","frock"],["Home & Kitchen","cooker"]];
+  const icon=(k)=>k==="star"?`<svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2L12 17l-5.6 3 1.3-6.2L3 9.5l6.3-.7z" fill="#F2B61B"/></svg>`:ART[k]("#9F2089");
+  const feat=[["hs","Hypersale"],["mall","Top Brands"],["saree","Premium Collection"],["basket","Fruits"],["cooker","Cookware"]];
+  const pop=[["kurti","Kurtis & Dress Materials",28512787],["saree","Sarees",20161456],["person","Westernwear",25913453],["jhumka","Jewellery",20850030],["shirt","Men Fashion",17987935],["frock","Kids",36046025],["shoes","Footwear",2529148],["lipstick","Beauty & Personal Care",27525348],["basket","Grocery",null]];
+  return `<div class="topbar"><span class="t" style="text-align:center">CATEGORIES</span>${IC.search}${IC.heart}${IC.cart}</div>
+  <div class="catwrap"><div class="catside">${side.map((s,i)=>`<div class="${i?'':'on'}"><span class="c">${icon(s[1])}</span>${s[0]}</div>`).join("")}</div>
+  <div class="catmain"><h3>POPULAR</h3><h4>Featured On Meesho</h4>
+    <div class="cg">${feat.map(f=>f[0]==="hs"
+        ? `<button class="cat" data-act="gohs"><div class="c hs">⚡</div>Hypersale</button>`
+        : f[0]==="mall" ? `<div class="cat"><div class="c">${ART.bottle("#E8A317")}</div>${f[1]}</div>`
+        : `<div class="cat"><div class="c">${ART[f[0]]("#B31B4B")}</div>${f[1]}</div>`).join("")}</div>
+    <h4>All Popular</h4>
+    <div class="cg">${pop.map(f=>`<div class="cat"><div class="c ph">${ART[f[0]]("#9F2089")}${f[2]?`<img src="${PX(f[2])}" alt="" loading="lazy" onerror="this.remove()">`:""}</div>${f[1]}</div>`).join("")}</div>
+  </div></div>`;
+}
+
+/* =========================================================
+   HUB SCREENS
+   ========================================================= */
+function hubCounts(){
+  return {
+    rto:S.units.filter(u=>u.status==="rto").length,
+    shelf:listed().length,
+    dispatch:S.units.filter(u=>["sold","packed","ofd"].includes(u.status)).length,
+    returns:S.units.filter(u=>["expired","returned","toSeller"].includes(u.status)).length
+  };
+}
+function hubHeader(){
+  const c=hubCounts(), t=S.hubTab;
+  return `<div class="hubtop"><div class="l1"><div class="hublogo">V</div><div><div class="nm">Valmo Hub</div><div class="sub">${HUB.name}</div></div>
+    <div class="daybox">${fmt(today())}<b>Day ${S.day}</b><button class="daybtn" data-act="day">+1 day ›</button></div></div></div>
+  <div class="htabs">
+    <button class="${t==='rto'?'on':''}" data-act="htab" data-v="rto"><b>${c.rto}</b>RTO intake</button>
+    <button class="${t==='shelf'?'on':''}" data-act="htab" data-v="shelf"><b>${c.shelf}</b>Hypersale shelf</button>
+    <button class="${t==='dispatch'?'on':''}" data-act="htab" data-v="dispatch"><b>${c.dispatch}</b>Dispatch</button>
+    <button class="${t==='returns'?'on':''}" data-act="htab" data-v="returns"><b>${c.returns}</b>To seller</button>
+  </div>`;
+}
+function hcard(u, body, acts){
+  const p=CATALOG[u.pid];
+  return `<div class="hcard">${thumb(p)}<div><div class="awb">AWB ${u.awb}${u.bin?` · Bin ${u.bin}`:""}</div><div class="n">${p.name}</div><div class="meta">${body}</div></div>${acts?`<div class="acts">${acts}</div>`:""}</div>`;
+}
+function scrHub(){
+  let out = hubHeader() + `<div class="hlist">`;
+  const t=S.hubTab;
+  if (t==="rto"){
+    const L=S.units.filter(u=>u.status==="rto");
+    out += `<div class="hsec">Marked RTO · check each before sending back</div>`;
+    if (L.length>3) out += `<div class="zonebox"><b>${L.length} RTOs waiting</b><br>Check them one by one below, or run the check on the whole batch.<div style="margin-top:8px"><button class="hbtn" data-act="bulk">Check &amp; list all ${L.length}</button></div><div class="muted" style="font-size:11.5px;margin-top:6px">Demo shortcut: treats every piece as passing the check.</div></div>`;
+    out += L.length ? L.slice(0,10).map(u=>hcard(u,`<span class="st rto">RTO</span> ${u.reason}<br>Listing price ${inr(CATALOG[u.pid].price)}`,
+      `<button class="hbtn" data-act="qc" data-v="${u.id}">Check for Hypersale</button><button class="hbtn alt" data-act="toSeller" data-v="${u.id}">Send to seller</button>`)).join("")
+      + (L.length>10?`<div class="muted" style="text-align:center;font-size:12px">+ ${L.length-10} more in this batch</div>`:"")
+      : `<div class="empty">No new RTOs. Items flagged today are on the Hypersale shelf.</div>`;
+  }
+  if (t==="shelf"){
+    const L=listed().sort((a,b)=>left(a)-left(b));
+    const byLeft=[...Array(HOLD_DAYS)].map((_,i)=>L.filter(u=>left(u)===i+1).length);
+    const mx=Math.max(1,...byLeft);
+    out += `<div class="zonebox"><b>Visible on Hypersale to ${Object.keys(ZONE).length} pincodes</b><br>${Object.entries(ZONE).map(([k,v])=>`${k} (${v.split(",")[0]})`).join(" · ")}</div>`;
+    out += `<div class="zonebox"><b>${L.length} pieces on the shelf</b> · by days left in the ${HOLD_DAYS}-day hold
+      <div style="display:grid;gap:5px;margin-top:8px">${byLeft.map((n,i)=>`<div style="display:grid;grid-template-columns:52px 1fr 34px;gap:8px;align-items:center;font-size:12px;font-variant-numeric:tabular-nums"><span class="muted">${i+1} ${i?'days':'day'}</span><div class="hbar ${i===0?'late':''}" style="margin:0"><i style="width:${n/mx*100}%"></i></div><b style="text-align:right">${n}</b></div>`).join("")}</div></div>`;
+    out += `<div class="hsec">Expiring soonest</div>`;
+    out += L.length ? L.slice(0,S.hubShow).map(u=>hcard(u,`<span class="st listed">Listed</span> Day ${u.held} of ${HOLD_DAYS} · ${left(u)} ${left(u)===1?'day':'days'} left<div class="hbar ${left(u)<=1?'late':''}"><i style="width:${u.held/HOLD_DAYS*100}%"></i></div>`)).join("")
+      + (L.length>S.hubShow?`<button class="hbtn alt" data-act="hubmore">Show 20 more (${L.length-S.hubShow} left)</button>`:"")
+      : `<div class="empty">Shelf is empty. Flag RTOs from the intake tab to list them.</div>`;
+  }
+  if (t==="dispatch"){
+    const L=S.units.filter(u=>["sold","packed","ofd"].includes(u.status));
+    out += `<div class="hsec">Hypersale orders to deliver · ${MAX_ATTEMPTS} attempts max</div>`;
+    out += L.length ? L.map(u=>{
+      const o=S.orders.find(o=>o.uid===u.id);
+      const lbl={sold:'<span class="st sold">New order</span>',packed:'<span class="st sold">Packed</span>',ofd:'<span class="st ofd">Out for delivery</span>'}[u.status];
+      const acts={
+        sold:`<button class="hbtn" data-act="pack" data-v="${u.id}">Pick from ${u.bin} &amp; repack</button>`,
+        packed:`<button class="hbtn" data-act="ofd" data-v="${u.id}">Hand to rider</button>`,
+        ofd:`<button class="hbtn" data-act="deliver" data-v="${u.id}">Mark delivered</button><button class="hbtn warn" data-act="fail" data-v="${u.id}">Attempt failed</button>`
+      }[u.status];
+      return hcard(u,`${lbl} Order #${o.no} · ${o.pin} · Prepaid ${inr(o.total)}<br>Attempt ${u.attempts+1} of ${MAX_ATTEMPTS} · Due ${fmt(o.eta)}<br>Seller fee on resale: ${inr(SELLER_FEE)}`,acts);
+    }).join("") : `<div class="empty">No Hypersale orders yet. Buy an item in the customer app and it lands here.</div>`;
+  }
+  if (t==="returns"){
+    const L=S.units.filter(u=>["expired","returned","toSeller"].includes(u.status));
+    out += `<div class="hsec">Goes back to seller on the normal reverse route</div>`;
+    if (L.length>20) out += `<div class="zonebox"><b>${L.length} pieces to return</b> · showing the latest 20</div>`;
+    out += L.length ? L.slice(-20).reverse().map(u=>{
+      const why={expired:`Not sold within ${HOLD_DAYS} days`,returned:`Hypersale delivery failed ${MAX_ATTEMPTS} times`,toSeller:"Failed quality check / not eligible"}[u.status];
+      return hcard(u,`<span class="st rto">Return to seller</span> ${why}`);
+    }).join("") : `<div class="empty">Nothing to return. Unsold items move here after ${HOLD_DAYS} days.</div>`;
+  }
+  return out + `</div>`;
+}
+
+/* =========================================================
+   OVERLAYS
+   ========================================================= */
+function overlay(){
+  if (S.sheet==="pin"){
+    const all={...ZONE,...OTHER_PINS};
+    return `<div class="scrim" data-act="close"><div class="sheet" data-stop>
+      <h3>Choose delivery pincode</h3><div class="muted" style="font-size:12.5px">Hypersale only shows items held at the hub that serves your pincode.</div>
+      ${Object.entries(all).map(([k,v])=>`<button class="pinopt ${S.pincode===k?'on':''}" data-act="setpin" data-v="${k}"><div><b>${k}</b><small>${v}</small></div><span class="zone ${ZONE[k]?'in':'out'}">${ZONE[k]?'Hypersale zone':'Outside zone'}</span></button>`).join("")}
+      <form class="pininput" data-form="pin"><input id="pin-in" inputmode="numeric" maxlength="6" placeholder="Enter any 6-digit pincode" aria-label="Pincode"><button class="pbtn" type="submit">Apply</button></form>
+    </div></div>`;
+  }
+  if (S.qc){
+    const u=unit(S.qc.id), p=CATALOG[u.pid], c=S.qc.c;
+    const items=[["pack","Outer packaging intact","No tears, water damage or tampering"],["unused","Product unused, tags on","Customer did not open or try it"],["cat","Category allowed on Hypersale","Not innerwear or opened personal-care"]];
+    const all=items.every(i=>c[i[0]]);
+    return `<div class="scrim" data-act="close"><div class="sheet" data-stop>
+      <h3>Hypersale check</h3><div class="muted" style="font-size:12.5px">AWB ${u.awb} · ${p.name}</div>
+      <div style="margin-top:8px">${items.map(i=>`<button class="check ${c[i[0]]?'on':''}" data-act="qctick" data-v="${i[0]}"><i>${c[i[0]]?'✓':''}</i><div>${i[1]}<small>${i[2]}</small></div></button>`).join("")}</div>
+      <div class="zonebox" style="margin-top:12px">Lists at <b>${inr(p.price)}</b> (original listing price) for up to <b>${HOLD_DAYS} days</b>, visible to ${Object.keys(ZONE).length} nearby pincodes. Next free bin: <b>${binName(S.nextBin)}</b></div>
+      <div style="display:grid;gap:8px;margin-top:14px">
+        <button class="hbtn" data-act="list" ${all?'':'disabled'}>Repack &amp; list on Hypersale</button>
+        <button class="hbtn warn" data-act="qcfail">Fails check · send to seller</button>
+      </div></div></div>`;
+  }
+  return "";
+}
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+function render(){
+  const scr=$("#screen"), content=$("#content"), nav=$("#bnav");
+  const hub=S.app==="hub";
+  scr.classList.toggle("hubmode",hub);
+  $("#sw-customer").classList.toggle("on",!hub);
+  $("#sw-hub").classList.toggle("on",hub); $("#sw-hub").classList.toggle("hub",hub);
+  const keepScroll = content.dataset.key === (S.app+S.screen+S.tab+S.hubTab+S.hpid+S.hsCat);
+  const y = content.scrollTop;
+  if (hub){ content.innerHTML=scrHub(); nav.hidden=true; }
+  else {
+    nav.hidden=false;
+    const map={home:scrHome,product:scrProduct,checkout:scrCheckout,confirmed:scrConfirmed,orders:scrOrders,categories:scrCategories};
+    content.innerHTML=map[S.screen]();
+    const on=k=>S.screen===k;
+    nav.innerHTML=`
+      <button class="${on('home')||on('product')?'on':''}" data-act="nav" data-v="home">${on('home')||on('product')?IC.homeOn:IC.home}Home</button>
+      <button class="${on('categories')?'on':''}" data-act="nav" data-v="categories">${on('categories')?IC.catsOn:IC.cats}Categories</button>
+      <button data-act="toast" data-v="Mall isn't part of this prototype">${IC.mall}Mall</button>
+      <button data-act="toast" data-v="Video Finds isn't part of this prototype">${IC.video}Video Finds</button>
+      <button class="${on('orders')||on('confirmed')?'on':''}" data-act="nav" data-v="orders">${IC.orders}My Orders</button>`;
+  }
+  content.dataset.key = S.app+S.screen+S.tab+S.hubTab+S.hpid+S.hsCat;
+  content.scrollTop = keepScroll ? y : 0;
+  $("#overlay").innerHTML=overlay();
+  renderGuide();
+}
+
+function renderGuide(){
+  const d=S.did;
+  const steps=[
+    [d.flag,"Flag an RTO at the hub","Hub app → RTO intake → Check for Hypersale → tick all three → Repack & list. The shelf already holds a week of pieces."],
+    [d.browse,"Find it as a local deal","Customer app → Hypersale tab. It's listed at the original price with a 1–2 day date."],
+    [d.buy,"Buy it","Buy Now → pay by UPI. Hypersale is prepaid only, and the ₹"+EXPRESS_FEE+" express fee shows at checkout."],
+    [d.deliver,"Deliver from the hub","Hub app → Dispatch → repack, hand to rider, mark delivered. Watch My Orders update."],
+    [d.geo,"Test the geofence","Change pincode to 110001. Hypersale disappears for that customer."],
+  ];
+  $("#steps").innerHTML=steps.map(s=>`<li class="${s[0]?'stepdone':''}"><div><b>${s[1]}</b><br><span>${s[2]}</span></div></li>`).join("");
+  const c=hubCounts();
+  $("#state").innerHTML=`
+    <div class="kv"><span>Customer pincode</span><b>${S.pincode} ${inZone()?'· in zone':'· outside zone'}</b></div>
+    <div class="kv"><span>Demo day</span><b>Day ${S.day} · ${fmt(today())}</b></div>
+    <div class="kv"><span>Live on Hypersale</span><b>${c.shelf}</b></div>
+    <div class="kv"><span>Hypersale orders</span><b>${S.orders.length}</b></div>
+    <div class="kv"><span>Sent back to seller</span><b>${c.returns}</b></div>`;
+}
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+const A = {
+  app:v=>{S.app=v;S.sheet=null;S.qc=null;},
+  nav:v=>{S.screen=v; if(v==="home"){} },
+  tab:v=>{S.tab=v;S.screen="home"; if(v==="hs"&&inZone()) S.did.browse=true;},
+  gohs:()=>{S.screen="home";S.tab="hs"; if(inZone()) S.did.browse=true;},
+  openP:v=>{S.pid=v;S.hpid=null;S.screen="product";},
+  openG:v=>{S.hpid=v;S.pid=null;S.screen="product";S.did.browse=true;},
+  hscat:v=>{S.hsCat=v;S.hsShow=24;},
+  hubmore:()=>{S.hubShow+=20;},
+  back:()=>{S.screen = S.screen==="checkout" ? "product" : "home";},
+  buy:()=>{ const g=groups()[S.hpid]; if(!g||!g.length){toast("Sold out nearby");return;} S.uid=g[0].id; S.screen="checkout"; },
+  pay:()=>{},
+  place:()=>{
+    const u=unit(S.uid); if(!u||u.status!=="listed"){toast("This piece is no longer available");S.screen="home";return;}
+    const p=CATALOG[u.pid];
+    u.status="sold";
+    S.orders.push({no:"HS"+(100000+S.seq++),uid:u.id,pay:"upi",total:p.price+EXPRESS_FEE,eta:plus(2),pin:S.pincode});
+    S.screen="confirmed"; S.did.buy=true;
+  },
+  pinsheet:()=>{S.sheet="pin";},
+  close:()=>{S.sheet=null;S.qc=null;},
+  setpin:v=>{S.pincode=v;S.sheet=null; if(!ZONE[v]) S.did.geo=true; toast(ZONE[v]?`Delivering to ${v}. Hypersale is available here.`:`Delivering to ${v}. No Hypersale hub serves this pincode.`);},
+  toast:v=>{toast(v);},
+  htab:v=>{S.hubTab=v;},
+  qc:v=>{S.qc={id:v,c:{}};},
+  qctick:v=>{S.qc.c[v]=!S.qc.c[v];},
+  list:()=>{
+    const u=unit(S.qc.id); u.status="listed"; u.held=0; S.hpid=null;
+    u.bin=binName(S.nextBin); S.nextBin++;
+    S.qc=null; S.did.flag=true; toast(`Listed on Hypersale · Bin ${u.bin}`);
+  },
+  qcfail:()=>{unit(S.qc.id).status="toSeller"; S.qc=null; toast("Moved to return-to-seller");},
+  toSeller:v=>{unit(v).status="toSeller"; toast("Moved to return-to-seller");},
+  pack:v=>{unit(v).status="packed"; toast("Repacked in Hypersale packaging");},
+  ofd:v=>{unit(v).status="ofd"; toast("Out for delivery");},
+  deliver:v=>{unit(v).status="delivered"; S.did.deliver=true; toast("Delivered · customer notified");},
+  fail:v=>{
+    const u=unit(v); u.attempts++;
+    if(u.attempts>=MAX_ATTEMPTS){u.status="returned"; toast(`${MAX_ATTEMPTS} attempts failed · return to seller`);}
+    else {u.status="packed"; toast(`Attempt ${u.attempts} failed · retry next run`);}
+  },
+  bulk:()=>{
+    const L=S.units.filter(u=>u.status==="rto");
+    L.forEach(u=>{u.status="listed";u.held=0;u.bin=binName(S.nextBin++);});
+    S.did.flag=true; toast(`${L.length} pieces listed on Hypersale`);
+  },
+  day:()=>{
+    S.day++;
+    let exp=0;
+    S.units.forEach(u=>{ if(u.status==="listed"){ u.held++; if(u.held>=HOLD_DAYS){u.status="expired";exp++;} } });
+    S.orders.forEach(o=>{ const u=unit(o.uid); if(["sold","packed","ofd"].includes(u.status) && o.eta<today()) o.eta=plus(1); });
+    const fresh=makeUnits(DAILY_INFLOW, S.seqU, ()=>0, "rto", rng(S.day*97));
+    S.seqU+=DAILY_INFLOW; S.units.push(...fresh);
+    toast(`Day ${S.day}: ${exp} unsold moved to return-to-seller · ${DAILY_INFLOW} new RTOs arrived`);
+  },
+  reset:()=>{S=seed(); toast("Demo reset");}
+};
+
+document.addEventListener("click",e=>{
+  const el=e.target.closest("[data-act]");
+  if(!el) return;
+  if(el.dataset.act==="close" && e.target.closest("[data-stop]")) return;
+  if(el.disabled) return;
+  const fn=A[el.dataset.act]; if(!fn) return;
+  e.preventDefault();
+  fn(el.dataset.v); render();
+});
+document.addEventListener("submit",e=>{
+  const f=e.target.closest("[data-form='pin']"); if(!f) return;
+  e.preventDefault();
+  const v=$("#pin-in").value.trim();
+  if(!/^\d{6}$/.test(v)){ toast("Enter a 6-digit pincode"); return; }
+  A.setpin(v); render();
+});
+document.getElementById("content").addEventListener("scroll",e=>{
+  const el=e.target; if(!el.querySelector("[data-more]")) return;
+  if(el.scrollTop+el.clientHeight > el.scrollHeight-400){ S.hsShow+=24; render(); }
+});
+render();
+</script>

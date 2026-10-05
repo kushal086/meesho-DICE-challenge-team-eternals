@@ -1,0 +1,770 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Before the Doorstep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#F4F2F3; --surface:#FFFFFF; --surface-2:#FAF7F9; --ink:#1C181E; --muted:#6D6571; --line:#E2DCE0;
+  --accent:#C3136A; --accent-soft:#FCE6F0; --accent-fill:#B0125F; --on-accent:#FFFFFF;
+  --warn:#B94A0B; --warn-soft:#FDEFE5; --bad:#B42318; --bad-soft:#FCEBE9; --good:#0F7A3D; --good-soft:#E6F4EC;
+  --phone-edge:#D6CFD4; --shadow:rgba(60,20,50,.26);
+  --sans:"Schibsted Grotesk","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --wa:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#131115; --surface:#1C191E; --surface-2:#211D23; --ink:#EEE9EF; --muted:#A39AA7; --line:#302A33;
+    --accent:#F0579D; --accent-soft:#3A1729; --accent-fill:#D63384;
+    --warn:#F2914F; --warn-soft:#35200F; --bad:#F97066; --bad-soft:#3A1A18; --good:#4CC784; --good-soft:#15291E;
+    --phone-edge:#3A343C; --shadow:rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#131115; --surface:#1C191E; --surface-2:#211D23; --ink:#EEE9EF; --muted:#A39AA7; --line:#302A33;
+  --accent:#F0579D; --accent-soft:#3A1729; --accent-fill:#D63384;
+  --warn:#F2914F; --warn-soft:#35200F; --bad:#F97066; --bad-soft:#3A1A18; --good:#4CC784; --good-soft:#15291E;
+  --phone-edge:#3A343C; --shadow:rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--sans)}
+.wrap{max-width:1480px;margin:0 auto;padding-inline:24px;padding-block:22px 48px}
+body.demo .wrap{padding-bottom:150px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--mono)}
+.eyebrow{font:600 11.5px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0}
+
+/* ---------- Hero ---------- */
+.hero{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 32px;margin-bottom:22px}
+.hero h1{font-size:clamp(24px,2.6vw,32px);line-height:1.12;font-weight:750;letter-spacing:-.02em;margin:8px 0 0;text-wrap:balance;max-width:36ch}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:7px;font:600 14px var(--sans);padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent-fill);border-color:var(--accent-fill);color:var(--on-accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.keys{font:500 11.5px var(--mono);color:var(--muted);width:100%;text-align:right}
+.keys kbd{font:inherit;border:1px solid var(--line);border-radius:4px;padding:0 4px;background:var(--surface)}
+
+/* ---------- Main grid ---------- */
+.grid{display:grid;gap:20px 24px;justify-content:center;align-items:start;
+  grid-template-columns:minmax(0,330px);
+  grid-template-areas:"lhead" "lphone" "lcall" "chead" "center" "rhead" "rphone" "rcall"}
+.lhead{grid-area:lhead}.rhead{grid-area:rhead}.chead{grid-area:chead}
+.lphone{grid-area:lphone}.rphone{grid-area:rphone}.center{grid-area:center}
+.lcall{grid-area:lcall}.rcall{grid-area:rcall}
+@media (min-width:1010px){
+  .grid{grid-template-columns:330px 262px 330px;grid-template-areas:"lhead chead rhead" "lphone center rphone" "lcall . rcall"}
+  .lhead,.rhead,.chead{align-self:end}
+}
+@media (min-width:1480px){
+  .grid{grid-template-columns:200px 330px 270px 330px 200px;grid-template-areas:". lhead chead rhead ." "lcall lphone center rphone rcall"}
+  .lcall,.rcall{padding-top:92px}
+}
+
+/* ---------- Panel headers ---------- */
+.head{display:flex;flex-direction:column;gap:10px}
+.head h2{font-size:26px;line-height:1.1;font-weight:750;letter-spacing:-.02em;margin:2px 0 0}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{font:600 12px/1 var(--sans);padding:6px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:var(--surface)}
+.pill.react{background:var(--warn-soft);border-color:transparent;color:var(--warn)}
+.pill.pro{background:var(--accent-soft);border-color:transparent;color:var(--accent)}
+.outcome{font:600 13px/1.3 var(--sans);margin:0}
+.outcome.bad{color:var(--bad)}.outcome.good{color:var(--good)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:3px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.seg>*{display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 4px;border-radius:9px;border:0;background:transparent;color:var(--muted);font:600 10.5px/1.2 var(--mono);text-transform:uppercase;letter-spacing:.05em;text-align:center}
+.seg>* b{font-size:12px;color:inherit}
+.seg button{cursor:pointer}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.seg .off{opacity:.55;text-decoration:line-through;text-decoration-color:var(--line)}
+.seg .lit{background:var(--warn-soft);color:var(--warn)}
+.cap{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:26px}
+.cap strong{font:600 12px/1.2 var(--mono);text-transform:uppercase;letter-spacing:.06em}
+.cap strong span{color:var(--muted);font-weight:500}
+.badge{font:700 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.05em;padding:6px 8px;border-radius:7px;white-space:nowrap}
+.badge.warn{background:var(--warn-soft);color:var(--warn)}
+.badge.star{background:var(--accent-fill);color:var(--on-accent)}
+.badge.soft{background:var(--accent-soft);color:var(--accent)}
+
+/* ---------- Center comparison ---------- */
+.chead{text-align:center;display:flex;flex-direction:column;gap:6px;padding-bottom:4px}
+.chead .big{font:700 15px/1.25 var(--sans);text-wrap:balance;margin:0}
+.chead .sub{font-size:12.5px;color:var(--muted);margin:0}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:0 8px}
+.lane-h{font:700 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;text-align:center;padding:8px 0;border-radius:8px}
+.lane-h.v{background:var(--warn-soft);color:var(--warn)}
+.lane-h.m{background:var(--accent-soft);color:var(--accent)}
+.row-label{grid-column:1/-1;font:600 10.5px/1 var(--mono);text-transform:uppercase;letter-spacing:.07em;color:var(--muted);text-align:center;padding:14px 0 7px;display:flex;align-items:center;gap:8px}
+.row-label::before,.row-label::after{content:"";flex:1;border-top:1px dashed var(--line)}
+.cell{border-radius:10px;padding:9px 10px;font-size:12.5px;line-height:1.3;display:flex;flex-direction:column;align-items:flex-start;gap:3px;border:1px solid var(--line);background:var(--surface);transition:box-shadow .2s,border-color .2s}
+.cell i{font-style:normal;color:var(--muted);font-size:11px;line-height:1}
+.cell.empty{background:transparent;border-style:dashed;color:var(--muted);justify-content:center;align-items:center;text-align:center}
+.cell.bad{background:var(--bad-soft);border-color:transparent;color:var(--bad);font-weight:600}
+.cell.bad i{color:inherit;opacity:.6}
+.cell.key{border-color:var(--accent)}
+.cell.active{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.cell .tag{font:700 9.5px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;padding:3px 5px;border-radius:4px;margin-bottom:2px;background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+.cell.bad .tag{background:transparent;border-color:currentColor;color:inherit}
+.cell .tag.new{background:var(--accent-fill);color:var(--on-accent);border-color:transparent}
+.cell b{font-weight:650}
+.insight{margin:16px 0 0;padding:12px;border-radius:12px;background:var(--surface);border:1px solid var(--line);font-size:13px;line-height:1.4;text-align:center}
+.insight b{color:var(--accent)}
+
+/* ---------- Callouts ---------- */
+.calls{display:flex;flex-direction:column;gap:10px}
+.note{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:13px;line-height:1.42}
+.note b{display:block;font-weight:650;font-size:13.5px;line-height:1.3}
+.note p{margin:4px 0 0;color:var(--muted)}
+.note.warn{background:var(--warn-soft);border-color:transparent}
+.note.warn b{color:var(--warn)}
+.note.bad{background:var(--bad-soft);border-color:transparent}
+.note.bad b{color:var(--bad)}
+.note.good{background:var(--good-soft);border-color:transparent}
+.note.good b{color:var(--good)}
+.note.pro{border-color:var(--accent)}
+.note.star{background:var(--accent-soft);border-color:transparent}
+.note.star b{color:var(--accent)}
+.note .tag{display:inline-block;font:700 10.5px/1 var(--mono);text-transform:uppercase;letter-spacing:.05em;background:var(--accent-fill);color:var(--on-accent);padding:5px 7px;border-radius:6px;margin-bottom:7px}
+.gaps{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:5px;color:var(--ink)}
+.loop{margin:0;padding:12px 13px;list-style:none;border:1px solid var(--line);border-radius:12px;background:var(--surface);display:flex;flex-direction:column;gap:7px}
+.loop .eyebrow{margin-bottom:2px}
+.loop li{display:flex;align-items:center;gap:8px;font:600 11.5px/1.2 var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.loop li span{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:10px;flex:none}
+.loop li.done{color:var(--ink)}
+.loop li.done span{background:var(--good);border-color:var(--good);color:#fff}
+.loop li.now{color:var(--accent)}
+.loop li.now span{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+
+/* ---------- Phone ---------- */
+.phone-wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+.phone{width:330px;max-width:100%;height:clamp(580px,calc(100vh - 240px),690px);background:#050505;border-radius:50px;padding:9px;
+  box-shadow:0 0 0 1px var(--phone-edge),0 28px 60px -24px var(--shadow)}
+.screen{position:relative;height:100%;border-radius:41px;overflow:hidden;background:#0B0B0B;display:flex;flex-direction:column;font-family:var(--wa);color:#E9EDEF;-webkit-font-smoothing:antialiased}
+.status{flex:none;height:42px;display:flex;justify-content:space-between;align-items:center;padding:6px 26px 0 34px;background:#151515;font-weight:600;font-size:14.5px}
+.status .icons{display:flex;gap:5px;align-items:center}
+.wa-head{flex:none;display:flex;align-items:center;gap:9px;padding:6px 12px 10px;background:#151515;border-bottom:1px solid #202020}
+.back{display:flex;align-items:center;gap:2px;background:#232323;border-radius:18px;padding:5px 10px 5px 7px;font-size:15px;color:#E9EDEF}
+.avatar{width:38px;height:38px;border-radius:50%;flex:none;display:grid;place-items:center;overflow:hidden}
+.avatar.valmo{background:#fff;color:#111;font:900 italic 8px/1 var(--wa);letter-spacing:0;white-space:nowrap}
+.avatar.valmo i{display:inline-block;width:3px;height:9px;background:#1FB5E9;transform:skewX(-18deg);margin-left:1px;vertical-align:-1px}
+.avatar.meesho{background:#F43397;color:#fff;font:800 21px/1 var(--wa);padding-bottom:3px}
+.who{min-width:0;flex:1}
+.who .name{display:flex;align-items:center;gap:4px;font-weight:650;font-size:16px}
+.who .subline{font-size:12.5px;color:#9AA3A7;height:16px}
+.who .subline.typing{color:#3DBE5E}
+.chat-box{position:relative;flex:1;min-height:0;display:flex}
+.chat{position:relative;flex:1;overflow-y:auto;padding:10px 10px 16px;display:flex;flex-direction:column;gap:7px;scrollbar-width:none;
+  background-color:#0B0B0B;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.05' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='20' cy='22' r='8'/%3E%3Crect x='78' y='12' width='20' height='14' rx='3'/%3E%3Cpath d='M44 70l9-12 9 12z'/%3E%3Ccircle cx='112' cy='74' r='5'/%3E%3Cpath d='M12 104c7-7 14 7 21 0'/%3E%3Crect x='64' y='104' width='14' height='18' rx='2'/%3E%3Cpath d='M114 112l8 8m0-8l-8 8'/%3E%3Cpath d='M118 36c4 0 6 3 6 6s-3 7-6 9c-3-2-6-6-6-9s2-6 6-6z'/%3E%3C/g%3E%3C/svg%3E")}
+.chat::-webkit-scrollbar{display:none}
+.chat>*{flex-shrink:0}
+.chip{align-self:center;background:#1E1E1E;color:#E9EDEF;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:9px;margin:6px 0 2px}
+.b-in{align-self:flex-start;max-width:88%;background:#242626;border-radius:16px;overflow:hidden;font-size:14px;line-height:1.36}
+.b-body{padding:8px 11px 6px}
+.b-time{font-size:11px;color:#8D9598;text-align:right;margin-top:2px}
+.b-in b{font-weight:650}
+.b-link{border:0;background:none;padding:0;font:inherit;color:#53BDEB;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.b-link:hover{color:#8FD6F5}
+.b-num{color:#53BDEB}
+q.wa-q{quotes:none;display:block;border-left:3px solid #F5A524;background:rgba(245,165,36,.09);border-radius:0 8px 8px 0;padding:6px 9px;margin:9px 0}
+q.wa-q::before,q.wa-q::after{content:none}
+.meter{height:5px;border-radius:3px;background:var(--line);margin-top:8px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--good);border-radius:3px}
+.b-in.flag-warn{box-shadow:0 0 0 2px #F08C3A}
+.b-in.flag-bad{box-shadow:0 0 0 2px #F04438}
+.b-in.ring{box-shadow:0 0 0 2px #F43397,0 0 0 7px rgba(244,51,151,.22)}
+.wa-btn{display:flex;width:100%;align-items:center;justify-content:center;gap:7px;padding:10px 10px;border:0;border-top:1px solid #34373A;background:transparent;color:#3DBE5E;font:15px/1.2 var(--wa);cursor:pointer;text-align:center}
+.wa-btn:hover:not(:disabled){background:#2B2E2F}
+.wa-btn:disabled{cursor:default}
+.wa-btn.chosen{color:#8D9598}
+.wa-btn.muted{opacity:.4}
+.wa-btn svg{flex:none}
+.b-out{align-self:flex-end;max-width:82%;background:#144D37;border-radius:16px;padding:5px 5px 5px;font-size:14px;line-height:1.36}
+.quote{background:#0F3A29;border-left:3px solid #3DBE5E;border-radius:9px;padding:6px 9px;font-size:12.5px;margin-bottom:3px}
+.quote b{display:block;color:#3DBE5E;font-weight:650}
+.quote span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:#CFE0D8}
+.o-text{padding:2px 7px 0}
+.o-time{display:flex;justify-content:flex-end;align-items:center;gap:3px;font-size:11px;color:#9BC2AF;margin-top:1px}
+.typing-b{align-self:flex-start;background:#242626;border-radius:16px;padding:12px 14px;display:flex;gap:4px}
+.typing-b span{width:6px;height:6px;border-radius:50%;background:#8D9598;animation:blink 1s infinite}
+.typing-b span:nth-child(2){animation-delay:.15s}.typing-b span:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+.enter{animation:pop .32s ease-out both}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.composer{flex:none;display:flex;align-items:center;gap:8px;padding:8px 10px 16px;background:#151515}
+.composer .circle{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex:none;background:#1F1F1F}
+.composer .field{flex:1;height:34px;border-radius:17px;background:#1F1F1F;display:flex;align-items:center;justify-content:flex-end;padding-right:9px}
+.composer .mic{background:#25B455}
+.wa-toast{position:absolute;left:50%;bottom:74px;transform:translateX(-50%);background:#2C2F30;color:#E9EDEF;font-size:12.5px;padding:8px 12px;border-radius:10px;width:max-content;max-width:86%;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.5);transition:opacity .2s;pointer-events:none}
+.quiet{position:absolute;inset:0;background:rgba(8,8,8,.86);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:20px;z-index:2}
+.quiet .chip{margin:0}
+.quiet p{margin:0;font-size:14px;color:#C9D1D4;line-height:1.4}
+.quiet small{font-size:12px;color:#F0A064;font-weight:600}
+
+.under{display:flex;justify-content:center;min-height:36px;align-items:center}
+.under p{margin:0;font-size:12px;color:var(--muted);text-align:center;max-width:32ch}
+.next{font:600 13px var(--sans);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 14px;cursor:pointer}
+.next:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ---------- Thesis ---------- */
+.thesis{margin-top:56px;padding-top:32px;border-top:1px solid var(--line);display:grid;gap:18px 40px;grid-template-columns:1fr;align-items:end}
+@media (min-width:1010px){.thesis{grid-template-columns:1.3fr 1fr}}
+.thesis h3{font-size:clamp(26px,3.3vw,42px);line-height:1.08;font-weight:800;letter-spacing:-.025em;margin:0;text-wrap:balance}
+.thesis h3 span{color:var(--accent)}
+.shift{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font:600 15px var(--sans);margin:0 0 10px}
+.shift .from{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.shift .to{color:var(--accent)}
+.fine{font-size:12px;color:var(--muted);margin:0;max-width:62ch;line-height:1.5}
+
+/* ---------- Demo bar ---------- */
+.demobar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));width:min(780px,calc(100% - 32px));
+  background:var(--ink);color:var(--bg);border-radius:16px;padding:12px 14px 12px 18px;display:flex;align-items:center;gap:16px;z-index:20;box-shadow:0 18px 40px -12px rgba(0,0,0,.45)}
+.demobar .step{font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;opacity:.7;white-space:nowrap}
+.demobar .txt{flex:1;min-width:0}
+.demobar .t{font-weight:700;font-size:16px}
+.demobar .c{font-size:12.5px;opacity:.75;line-height:1.35}
+.dots{display:flex;gap:4px;margin-top:6px}
+.dots i{width:18px;height:3px;border-radius:2px;background:currentColor;opacity:.25}
+.dots i.on{opacity:1;background:#F43397}
+.demobar button{border:1px solid rgba(128,128,128,.4);background:transparent;color:inherit;border-radius:10px;padding:8px 12px;font:600 13px var(--sans);cursor:pointer;white-space:nowrap}
+.demobar button.go{background:#F43397;border-color:#F43397;color:#fff}
+.demobar button:disabled{opacity:.35;cursor:default}
+@media (max-width:640px){.demobar{flex-wrap:wrap;gap:10px}.demobar .txt{flex-basis:100%;order:-1}}
+
+@media (max-width:420px){.wrap{padding-inline:16px}.keys{text-align:left}}
+@media (prefers-reduced-motion:reduce){.enter{animation:none}.typing-b span,.spin{animation-duration:2s}}
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Proactive delivery readiness · Meesho DICE Challenge 3.0 concept</p>
+      <h1>Move the intervention from the doorstep to <em>before the doorstep</em>.</h1>
+    </div>
+    <div class="controls">
+      <button class="btn primary" id="demoBtn" type="button">▶ Demo flow</button>
+      <button class="btn" id="resetBtn" type="button">↺ Reset demo</button>
+      <div class="keys">Keys: <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> jump stages · <kbd>D</kbd> demo · <kbd>→</kbd> next step</div>
+    </div>
+  </header>
+
+  <main class="grid">
+    <!-- LEFT HEADER -->
+    <div class="head lhead">
+      <p class="eyebrow">Current experience</p>
+      <h2>Valmo today</h2>
+      <div class="pills"><span class="pill react">Reactive</span><span class="pill">Notification arrives on delivery day</span></div>
+      <p class="outcome bad">Customer unreachable → failed attempt</p>
+      <div class="seg" aria-label="Valmo touchpoints">
+        <div class="off"><b>—</b>Shipping</div>
+        <div class="off"><b>—</b>Day before</div>
+        <div class="lit"><b>●</b>Delivery day</div>
+      </div>
+      <div class="cap"><strong>Delivery day <span>· Thu 10 Sep</span></strong><span class="badge warn">Today</span></div>
+    </div>
+
+    <!-- CENTER HEADER -->
+    <div class="chead">
+      <p class="eyebrow">Same delivery. Different intervention point.</p>
+      <p class="big">When does the customer first hear from us?</p>
+      <p class="sub">One Thu 10 Sep delivery, day by day</p>
+    </div>
+
+    <!-- RIGHT HEADER -->
+    <div class="head rhead">
+      <p class="eyebrow">Proposed experience</p>
+      <h2>Meesho proactive delivery</h2>
+      <div class="pills"><span class="pill pro">Proactive</span><span class="pill">Intervention starts earlier</span></div>
+      <p class="outcome good">Customer unavailable → reschedule BEFORE attempt</p>
+      <div class="seg" id="seg" role="group" aria-label="Jump to stage">
+        <button type="button" data-stage="1" aria-pressed="false"><b>01</b>Shipping</button>
+        <button type="button" data-stage="2" aria-pressed="false"><b>02</b>Pre-delivery</button>
+        <button type="button" data-stage="3" aria-pressed="false"><b>03</b>Post-delivery</button>
+      </div>
+      <div class="cap" id="rcap"></div>
+    </div>
+
+    <!-- LEFT CALLOUTS -->
+    <aside class="calls lcall">
+      <div class="note warn"><b>⚠️ Customer is informed only when delivery is already underway</b><p>Too late to proactively plan availability.</p></div>
+      <div class="note">
+        <ul class="gaps">
+          <li>❌ No pre-delivery order confirmation</li>
+          <li>❌ No proactive address/mobile verification</li>
+          <li>❌ No one-day-ahead rescheduling</li>
+          <li>❌ Failed attempt can become RTO</li>
+        </ul>
+      </div>
+      <div class="note bad"><b>Rider reaches → customer unavailable → failed attempt</b><p>The first chance to react comes after the attempt has already failed.</p></div>
+    </aside>
+
+    <!-- LEFT PHONE -->
+    <div class="phone-wrap lphone">
+      <div class="phone"><div class="screen">
+        <div class="status"><span>2:21</span><span class="icons" data-icons></span></div>
+        <div class="wa-head">
+          <span class="back" data-back></span>
+          <span class="avatar valmo">VALMO<i></i></span>
+          <div class="who"><div class="name">Valmo <span data-verified></span></div></div>
+        </div>
+        <div class="chat-box">
+          <div class="chat" id="vchat">
+            <div class="chip">Thu 10 Sep</div>
+            <div class="b-in flag-warn"><div class="b-body"><b>Arriving Today</b> : Your Meesho order with AWB: VL0085316629385 is out for delivery.<br><br>Pay <b>Rs. 100.0</b> via UPI by scanning the QR code on the rider app.<br><br>For any assistance, you can contact the delivery agent at: 97XXXXX380<div class="b-time">3:36 pm</div></div></div>
+            <div class="b-in"><div class="b-body"><b>Cancellation</b> : Share PIN 8538 to reject delivery of your order with AWB: VL0085316629385<br><br>Share with agent ONLY when he is at your location. Do not share it over the phone.<div class="b-time">7:03 pm</div></div></div>
+            <div class="b-in flag-bad"><div class="b-body"><b>Failed Delivery</b> : Sorry, we failed to deliver your order with AWB: VL0085316629385<br><br>We will try to deliver again in 24-48 Hrs- Meesho<div class="b-time">7:04 pm</div></div></div>
+          </div>
+          <div class="quiet" id="quiet" hidden>
+            <div class="chip" id="quietDate">Tue 8 Sep</div>
+            <p>No message from Valmo on this day.</p>
+            <small>First message arrives on delivery day</small>
+          </div>
+        </div>
+        <div class="composer" data-composer></div>
+      </div></div>
+      <div class="under"><p>Reproduced from a customer's Valmo WhatsApp chat. Agent number masked.</p></div>
+    </div>
+
+    <!-- CENTER COMPARISON -->
+    <section class="center" aria-label="Day-by-day comparison">
+      <div class="compare" id="compare">
+        <div class="lane-h v">Valmo today</div>
+        <div class="lane-h m">Meesho proposed</div>
+
+        <div class="row-label">Tue 8 Sep · shipped</div>
+        <div class="cell empty">No message</div>
+        <div class="cell m" data-row="1"><span class="tag">First message</span><b>Order shipped</b><i>↓</i><span>Verify details</span></div>
+
+        <div class="row-label">Wed 9 Sep · 1 day before</div>
+        <div class="cell empty">No message</div>
+        <div class="cell m key" data-row="2"><span class="tag new">⭐ New</span><b>1 day before delivery</b><i>↓</i><span>Confirm availability / reschedule</span></div>
+
+        <div class="row-label">Thu 10 Sep · delivery day</div>
+        <div class="cell bad"><span class="tag">First message</span>Out for delivery<i>↓</i>Customer informed<i>↓</i>Customer unavailable<i>↓</i>Failed attempt</div>
+        <div class="cell m" data-row="3"><b>Delivery</b><i>↓</i><span>Customer is prepared, no extra message</span></div>
+
+        <div class="row-label">After</div>
+        <div class="cell bad">Reattempt<i>↓</i>RTO risk</div>
+        <div class="cell m" data-row="4"><b>Post-delivery confirmation</b></div>
+      </div>
+      <p class="insight">Valmo speaks first <b>on the doorstep</b>. Meesho speaks first <b>two days earlier</b>, while there is still time to act.</p>
+    </section>
+
+    <!-- RIGHT PHONE -->
+    <div class="phone-wrap rphone">
+      <div class="phone"><div class="screen" id="mscreen">
+        <div class="status"><span>2:21</span><span class="icons" data-icons></span></div>
+        <div class="wa-head">
+          <span class="back" data-back></span>
+          <span class="avatar meesho">m</span>
+          <div class="who"><div class="name">Meesho <span data-verified></span></div><div class="subline" id="msub">Business account</div></div>
+        </div>
+        <div class="chat-box"><div class="chat" id="mchat" aria-live="polite"></div></div>
+        <div class="composer" data-composer></div>
+        <div class="wa-toast" id="toast" style="opacity:0" role="status"></div>
+      </div></div>
+      <div class="under"><button type="button" class="next" id="nextStage"></button></div>
+    </div>
+
+    <!-- RIGHT CALLOUTS -->
+    <aside class="calls rcall" id="rcall"></aside>
+  </main>
+
+  <section class="thesis">
+    <h3>Don't wait for the failed delivery. <span>Give the customer a chance to prevent it.</span></h3>
+    <div>
+      <p class="shift"><span class="from">Reactive delivery updates</span><span aria-hidden="true">→</span><span class="to">Proactive delivery readiness</span></p>
+      <p class="fine">Concept prototype for Meesho DICE Challenge 3.0. The Meesho conversation is a design proposal, not a live Meesho feature. Order details, names, numbers and dates are illustrative; WhatsApp is the interface, the intervention is verify → prepare → confirm → deliver → verify receipt.</p>
+    </div>
+  </section>
+</div>
+
+<div class="demobar" id="demobar" hidden>
+  <div class="step" id="dStep">Step 1 / 5</div>
+  <div class="txt"><div class="t" id="dTitle"></div><div class="c" id="dCap"></div><div class="dots" id="dDots"></div></div>
+  <button type="button" id="dPrev">← Prev</button>
+  <button type="button" class="go" id="dNext">Next →</button>
+  <button type="button" id="dExit">Exit</button>
+</div>
+
+<script>
+(function(){
+/* ---------- Static icons ---------- */
+const ICON = {
+  verified:'<svg width="17" height="17" viewBox="0 0 24 24" aria-label="Verified business"><path fill="#2F8CFF" d="M12 1.6l2.5 1.7 3-.2 1.1 2.8 2.8 1.2-.2 3L22.9 12l-1.7 2.5.2 3-2.8 1.1-1.2 2.8-3-.2L12 22.9l-2.5-1.7-3 .2-1.1-2.8-2.8-1.2.2-3L1.1 12l1.7-2.5-.2-3 2.8-1.1 1.2-2.8 3 .2z"/><path d="M7.6 12.2l3 3 5.8-6.2" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  reply:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 6L4 11.5 9.5 17"/><path d="M4 11.5h9.5a6.5 6.5 0 0 1 6.5 6.5v1"/></svg>',
+  link:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3.5"/><path d="M9.5 14.5l5-5M10 9.5h4.5V14"/></svg>',
+  ticks:'<svg width="17" height="11" viewBox="0 0 17 11" fill="none" stroke="#53BDEB" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 6l3 3 6-7.5"/><path d="M7.5 9l1 0.5 6-8"/></svg>',
+  status:'<svg width="17" height="11" viewBox="0 0 17 11" fill="#E9EDEF"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1" opacity=".35"/><rect x="13.5" y="0" width="3" height="11" rx="1" opacity=".35"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#E9EDEF" stroke-width="1.8" stroke-linecap="round"><path d="M1.5 4.5a9.5 9.5 0 0 1 13 0"/><path d="M4 7.2a6 6 0 0 1 8 0"/><circle cx="8" cy="10" r="1" fill="#E9EDEF"/></svg><svg width="25" height="12" viewBox="0 0 25 12"><rect x=".5" y=".5" width="21" height="11" rx="3.5" fill="none" stroke="#8D9598"/><rect x="2" y="2" width="6" height="8" rx="2" fill="#F04438"/><rect x="22.5" y="4" width="1.8" height="4" rx=".9" fill="#8D9598"/></svg>',
+  back:'<svg width="10" height="17" viewBox="0 0 10 17" fill="none" stroke="#E9EDEF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 1.5L2 8.5l6.5 7"/></svg><span>206</span>',
+  composer:'<span class="circle"><svg width="18" height="18" viewBox="0 0 18 18" stroke="#E9EDEF" stroke-width="1.8" stroke-linecap="round"><path d="M9 3v12M3 9h12"/></svg></span><span class="field"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E9EDEF" stroke-width="1.7"><path d="M20 12.5V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h5.5z"/><path d="M12.5 20c0-4 3.5-7.5 7.5-7.5"/></svg></span><span class="circle"><svg width="18" height="16" viewBox="0 0 24 20" fill="none" stroke="#E9EDEF" stroke-width="1.7" stroke-linejoin="round"><path d="M3 6h4l2-3h6l2 3h4v12H3z"/><circle cx="12" cy="11.5" r="3.8"/></svg></span><span class="circle mic"><svg width="14" height="18" viewBox="0 0 14 20" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="1" width="6" height="11" rx="3" fill="#fff"/><path d="M1 9a6 6 0 0 0 12 0M7 15v4"/></svg></span>'
+};
+document.querySelectorAll('[data-icons]').forEach(e=>e.innerHTML=ICON.status);
+document.querySelectorAll('[data-back]').forEach(e=>e.innerHTML=ICON.back);
+document.querySelectorAll('[data-verified]').forEach(e=>e.outerHTML=ICON.verified);
+document.querySelectorAll('[data-composer]').forEach(e=>e.innerHTML=ICON.composer);
+
+/* ---------- Data ---------- */
+const ORDER = '#M123456789';
+const ORIG_DATE = 'Thu, 10 Sep';
+const ADDR_HOME = '12, 2nd Cross Road, Jayanagar 4th Block, Bengaluru 560041';
+const ADDR_NEW = '4th Floor, Tower B, Prestige Tech Park, Bellandur, Bengaluru 560103';
+const MOB_1 = '+91 98XXX XX421';
+const MOB_2 = '+91 90XXX XX785';
+const LINK = (id, text='click here') => `<button type="button" class="b-link" data-link="${id}">${text}</button>`;
+const LOOP = ['Verify','Prepare','Confirm','Deliver','Verify receipt'];
+
+const R = (label, act) => ({label, act});
+const L = (label, act) => ({label, act, link:true});
+
+let S;
+function fresh(){
+  return {thread:[], uid:0, t:600, stage:0, loop:0, delivered:false,
+    address:ADDR_HOME, mobile:MOB_1, deliveryDate:ORIG_DATE,
+    available:false, rescheduled:false, codPaid:false,
+    typing:false, busy:false, anchor:null, smooth:false, demo:0};
+}
+
+function fmt(t){
+  const h24 = Math.floor(t/60)%24, m = t%60;
+  const h = ((h24+11)%12)+1;
+  return h + ':' + String(m).padStart(2,'0') + (h24<12?' am':' pm');
+}
+function chip(text){ return {kind:'date', text}; }
+function biz(text, opt={}){ return Object.assign({kind:'in', text, buttons:[], chosen:null}, opt); }
+function me(text, quote){ return {kind:'out', text, quote}; }
+
+function push(m, anim){
+  m.id = ++S.uid;
+  if(m.kind==='in'){ S.t += 1; m.time = fmt(S.t); }
+  if(m.kind==='out'){ S.t += 2; m.time = fmt(S.t); }
+  m.anim = !!anim;
+  S.thread.push(m);
+  if(m.kind!=='date') S.anchor = m;
+  return m;
+}
+const find = key => S.thread.find(m=>m.key===key);
+const btnOf = (m, act) => m.buttons.find(b=>b.act===act);
+const noComma = d => d.replace(',', '');
+
+/* Runs a short conversational exchange. Items are functions returning a message; biz items show a typing indicator first. */
+function seq(items, instant){
+  if(instant){ items.forEach(f=>push(f(), false)); return; }
+  S.busy = true; let i = 0; const own = S;
+  const step = () => {
+    if(S !== own) return;
+    if(i >= items.length){ S.busy=false; S.typing=false; render(); return; }
+    const f = items[i++];
+    if(f.biz){
+      S.typing = true; render();
+      setTimeout(()=>{ if(S !== own) return; S.typing=false; push(f(), true); S.smooth=true; render(); step(); }, 800);
+    } else {
+      setTimeout(()=>{ if(S !== own) return; push(f(), true); S.smooth=true; render(); step(); }, i===1 ? 0 : 1000);
+    }
+  };
+  step();
+}
+const B = f => (f.biz = true, f);
+function tapped(m, b){ m.chosen = b.label; return () => me(b.label, m.title); }
+
+/* ---------- Stage content ---------- */
+function stage1(anim){
+  S.stage = 1; S.loop = 0; S.t = 10*60+11;
+  push(chip('Tue 8 Sep'), anim);
+  push(biz(`📦 <b>Your Meesho order has been shipped!</b>\n\nOrder: ${ORDER}\nItem: Women's Rayon Kurta Set (M)\nExpected delivery: <b>${ORIG_DATE}</b>\n\n📍 <b>Delivery address:</b>\n${S.address}\n📱 <b>Mobile:</b> ${S.mobile}\n\nPlease check these details before your order reaches you. To update your address or phone number, or to track your order, ${LINK('order')}.\n\nIf everything looks right, tap <b>Confirm details</b>.`,
+    {key:'ship', title:'📦 Your Meesho order has been shipped!', buttons:[
+      R('✓ Confirm details','confirmDetails')]}), anim);
+}
+function stage2(anim){
+  S.stage = 2; S.loop = 1; S.t = 18*60+29;
+  push(chip('Wed 9 Sep'), anim);
+  push(biz(`🛵 <b>Your Meesho order arrives tomorrow</b>\n\nOrder: ${ORDER}\nExpected delivery: <b>Tomorrow, ${ORIG_DATE}</b>\nDelivery window: <b>10:00 AM – 11:00 PM</b><q class="wa-q">💰 <b>CASH ON DELIVERY (COD): ₹619</b>\nPlease keep <b>₹619</b> ready when your delivery partner arrives.\nWant to skip cash? Pay now: ${LINK('pay')}</q>Will someone be available to receive it?`,
+    {key:'avail', title:'🛵 Your Meesho order arrives tomorrow', buttons:[
+      R("✓ Yes, I'm available",'available'), R('🕐 Reschedule delivery','reschedule')]}), anim);
+}
+function stage3(anim){
+  S.stage = 3; S.loop = 4; S.delivered = true; S.t = 12*60+47;
+  push(chip(noComma(S.deliveryDate)), anim);
+  push(biz(`🎉 <b>Delivered!</b>\n\nYour Meesho order ${ORDER} was delivered successfully.\n\n📍 <b>Delivered to:</b>\n${S.address}\n\nDid you receive your parcel?`,
+    {key:'delivered', title:'🎉 Delivered!', buttons:[
+      R('✓ Yes, I received it','received'), R("❌ I didn't receive the order",'notReceived')]}), anim);
+}
+
+/* ---------- Actions behind every WhatsApp button ---------- */
+const ACT = {
+  confirmDetails(m,b,inst){
+    seq([tapped(m,b), B(()=>biz(`✅ <b>Thank you for confirming your details!</b>\n\nYour order ${ORDER} is confirmed and will be delivered on <b>${S.deliveryDate}</b>.\n\nWe'll message you again one day before delivery.`,
+      {title:'Thank you for confirming your details!'}))], inst);
+  },
+  updateAddress(m,b,inst){
+    seq([tapped(m,b), B(()=>biz(`Where should we deliver your order?\n\n📍 Current address:\n${S.address}`,
+      {title:'Where should we deliver your order?', buttons:[R('Use current address','useCurrentAddress'), R('Enter new address','enterNewAddress')]}))], inst);
+  },
+  useCurrentAddress(m,b,inst){
+    seq([tapped(m,b), B(()=>biz(`✓ <b>Address confirmed</b>\n\nWe'll deliver to:\n${S.address}`, {title:'Address confirmed'}))], inst);
+  },
+  enterNewAddress(m,b,inst){
+    seq([tapped(m,b),
+      B(()=>biz('Please type the full address, with a landmark and PIN code.', {title:'Type the full address'})),
+      ()=>{ S.address = ADDR_NEW; return me('📍 ' + ADDR_NEW); },
+      B(()=>biz(`✓ <b>Address updated</b>\n\nWe'll deliver to:\n${S.address}\n\nExpected delivery is unchanged: ${S.deliveryDate}.`, {title:'Address updated'}))], inst);
+  },
+  updateMobile(m,b,inst){
+    seq([tapped(m,b), B(()=>biz(`Which number should the delivery partner call?\n\n📱 Current: ${S.mobile}`,
+      {title:'Which number should the delivery partner call?', buttons:[R('Use this number','useThisNumber'), R('Enter another number','anotherNumber')]}))], inst);
+  },
+  useThisNumber(m,b,inst){
+    seq([tapped(m,b), B(()=>biz(`✓ <b>Mobile number confirmed</b>\n\nThe delivery partner will call ${S.mobile}.`, {title:'Mobile number confirmed'}))], inst);
+  },
+  anotherNumber(m,b,inst){
+    seq([tapped(m,b),
+      B(()=>biz('Please type the 10-digit mobile number.', {title:'Type the mobile number'})),
+      ()=>{ S.mobile = MOB_2; return me(MOB_2); },
+      B(()=>biz(`✓ <b>Mobile number updated</b>\n\nThe delivery partner will call ${S.mobile}.`, {title:'Mobile number updated'}))], inst);
+  },
+  updateBoth(m,b,inst){
+    seq([tapped(m,b), B(()=>biz('What would you like to update?',
+      {title:'What would you like to update?', buttons:[R('✎ Address','updateAddress'), R('📱 Mobile number','updateMobile')]}))], inst);
+  },
+  available(m,b,inst){
+    S.available = true; S.loop = Math.max(S.loop, 2);
+    seq([tapped(m,b),
+      B(()=>biz(`Perfect! We've noted that you'll be available tomorrow.\n\nYour delivery partner will attempt delivery during the delivery window.`, {title:'Availability noted'}))], inst);
+  },
+  reschedule(m,b,inst){
+    seq([tapped(m,b), B(()=>biz('No problem. When would you like to receive your order?\n\nChoose one of the next available delivery dates:',
+      {title:'When would you like to receive your order?', buttons:['Fri, 11 Sep','Sat, 12 Sep','Sun, 13 Sep','Mon, 14 Sep','Tue, 15 Sep'].map(d=>R(d,'pickDate'))}))], inst);
+  },
+  pickDate(m,b,inst){
+    S.deliveryDate = b.label; S.rescheduled = true; S.loop = Math.max(S.loop, 2);
+    seq([tapped(m,b), B(()=>biz(`✓ <b>Delivery rescheduled</b>\n\nWe'll deliver your order on <b>${b.label}</b>.\n\nYou won't need to wait for the delivery partner on ${ORIG_DATE}.`, {title:'Delivery rescheduled'}))], inst);
+  },
+  received(m,b,inst){
+    S.loop = 5;
+    seq([tapped(m,b), B(()=>biz(`Thank you for shopping with us! 💖`, {title:'Thank you for shopping with us!'}))], inst);
+  },
+  notReceived(m,b,inst){
+    seq([tapped(m,b), B(()=>biz(`We're sorry for the inconvenience.\n\nOur team will reach out to you shortly.`, {title:'Our team will reach out to you shortly'}))], inst);
+  },
+  track(){ toast('Opens live order tracking in the Meesho app'); },
+  viewOrder(){ toast('Opens order ' + ORDER + ' in the Meesho app'); }
+};
+const LINKS = {
+  order(){ toast('Opens the Meesho order page: update address or mobile, track order'); },
+  pay(){
+    if(S.busy) return;
+    if(S.codPaid){ toast('Already paid'); return; }
+    toast('Opens the Meesho Pay Now page');
+    S.codPaid = true; S.loop = Math.max(S.loop, 2);
+    const av = find('avail'), pending = av && av.chosen == null;
+    seq([B(()=>biz(`✅ <b>Amount received</b>\n\nWe've received your payment of <b>₹619</b> for order ${ORDER}.\n\nNo cash is needed at delivery.` +
+      (pending ? `\n\n👆 To confirm your availability, please select one of the options above.` : ''), {title:'Amount received'}))], false);
+  }
+};
+
+/* ---------- Rendering ---------- */
+const mchat = document.getElementById('mchat');
+const nl = s => s.replace(/\n/g,'<br>');
+
+function btnHTML(m, b, i){
+  let dis = false, cls = '';
+  if(!b.link && m.chosen != null){ dis = true; cls = (m.chosen === b.label) ? 'chosen' : 'muted'; }
+  return `<button type="button" class="wa-btn ${cls}" data-msg="${m.id}" data-i="${i}" ${dis?'disabled':''}>${b.link?ICON.link:ICON.reply}<span>${b.label}</span></button>`;
+}
+function msgHTML(m){
+  const a = m.anim ? ' enter' : '';
+  if(m.kind === 'date') return `<div class="chip${a}">${m.text}</div>`;
+  if(m.kind === 'out'){
+    const q = m.quote ? `<div class="quote"><b>Meesho</b><span>${m.quote}</span></div>` : '';
+    return `<div class="b-out${a}" data-id="${m.id}">${q}<div class="o-text">${nl(m.text)}<div class="o-time">${m.time} ${ICON.ticks}</div></div></div>`;
+  }
+  const ring = (m.key === 'avail' && S.stage === 2) ? ' ring' : '';
+  return `<div class="b-in${ring}${a}" data-id="${m.id}"><div class="b-body">${nl(m.text)}<div class="b-time">${m.time}</div></div>${m.buttons.map((b,i)=>btnHTML(m,b,i)).join('')}</div>`;
+}
+
+const CALLS = {
+  1:`<div class="note pro"><b>Verify, two days ahead</b><p>Address and mobile are in the message. One tap confirms them; the order-page link fixes them.</p></div>
+     <div class="note"><b>Wrong details get fixed early</b><p>A bad number or address surfaces now, not when the rider is already calling from the lane.</p></div>`,
+  2:`<div class="note star"><span class="tag">⭐ New intervention</span><b>1 day before delivery</b><p>Customer tells us BEFORE the rider reaches the doorstep.</p></div>
+     <div class="note good"><b>Customer unavailable → reschedule BEFORE attempt</b><p>The rider never makes a trip that was going to fail.</p></div>
+     <div class="note warn"><b>COD called out a day early</b><p>The customer is asked to keep ₹619 ready, with a Pay now link if they'd rather not use cash.</p></div>`,
+  3:`<div class="note good"><b>No "out for delivery" scramble</b><p>Availability and payment were settled the day before, so the next message is the delivery itself.</p></div>
+     <div class="note pro"><b>Verify receipt</b><p>The message names the delivered address, and one tap reports a missing parcel so the team can follow up.</p></div>`
+};
+const CAPS = {
+  1:()=>`<strong>After shipping <span>· Tue 8 Sep</span></strong><span class="badge soft">Intervention starts earlier</span>`,
+  2:()=>`<strong>1 day before delivery <span>· Wed 9 Sep</span></strong><span class="badge star">⭐ New intervention</span>`,
+  3:()=>`<strong>Post-delivery <span>· ${noComma(S.deliveryDate)}</span></strong><span class="badge soft">Verify receipt</span>`
+};
+
+const TPL_KEY = {1:'ship', 2:'avail', 3:'delivered'};
+function tplNote(){
+  const m = find(TPL_KEY[S.stage]); if(!m) return '';
+  const n = m.text.replace(/<q class="wa-q">|<\/q>/g,'\n\n').replace(/<[^>]+>/g,'').length;
+  return `<div class="note"><b>Template body: <span class="mono">${n} / 1024</span> characters</b><p>WhatsApp's limit for a template message body, counted with the sample details filled in.</p><div class="meter"><i style="width:${Math.min(100,n/1024*100).toFixed(1)}%"></i></div></div>`;
+}
+function render(){
+  mchat.innerHTML = S.thread.map(msgHTML).join('') + (S.typing ? '<div class="typing-b enter"><span></span><span></span><span></span></div>' : '');
+  S.thread.forEach(m=>m.anim=false);
+  const sub = document.getElementById('msub');
+  sub.textContent = S.typing ? 'typing…' : 'Business account';
+  sub.classList.toggle('typing', S.typing);
+
+  document.querySelectorAll('#seg button').forEach(b=>b.setAttribute('aria-pressed', String(+b.dataset.stage === S.stage)));
+  document.getElementById('rcap').innerHTML = CAPS[S.stage] ? CAPS[S.stage]() : '';
+  document.getElementById('rcall').innerHTML = (CALLS[S.stage]||'') +
+    tplNote() + `<ol class="loop"><li class="eyebrow" style="text-transform:uppercase">Readiness loop</li>${LOOP.map((l,i)=>`<li class="${i<S.loop?'done':i===S.loop?'now':''}"><span>${i<S.loop?'✓':i+1}</span>${l}</li>`).join('')}</ol>`;
+
+  const row = [1,2,2,3,4][S.loop];
+  document.querySelectorAll('#compare [data-row]').forEach(c=>c.classList.toggle('active', +c.dataset.row === row));
+
+  const nx = document.getElementById('nextStage');
+  nx.textContent = S.stage === 1 ? 'Next: 1 day before delivery →'
+    : S.stage === 2 ? 'Next: delivered →' : '↺ Start the journey again';
+
+  // left phone "nothing yet" overlay during the demo's pre-delivery steps
+  const q = document.getElementById('quiet');
+  q.hidden = !(S.demo >= 1 && S.demo <= 4);
+  document.getElementById('quietDate').textContent = S.demo <= 2 ? 'Tue 8 Sep' : 'Wed 9 Sep';
+
+  renderDemo();
+  scrollChat();
+}
+
+function scrollChat(){
+  const behavior = S.smooth ? 'smooth' : 'auto'; S.smooth = false;
+  requestAnimationFrame(()=>{
+    const max = mchat.scrollHeight - mchat.clientHeight;
+    let top = max;
+    if(!S.typing && S.anchor){
+      const el = mchat.querySelector(`[data-id="${S.anchor.id}"]`);
+      if(el){
+        top = S.anchor.kind === 'in' ? el.offsetTop - 10 : el.offsetTop + el.offsetHeight - mchat.clientHeight + 14;
+      }
+    }
+    mchat.scrollTo({top: Math.max(0, Math.min(top, max)), behavior});
+  });
+}
+
+/* ---------- Toast ---------- */
+let toastT;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.opacity = 1;
+  clearTimeout(toastT); toastT = setTimeout(()=>t.style.opacity = 0, 1800);
+}
+/* ---------- Navigation ---------- */
+function reset(){ const demo = S ? S.demo : 0; S = fresh(); S.demo = demo; }
+function markFrom(i){ S.thread.slice(i).forEach(m=>m.anim = true); }
+
+function canonical(n){
+  reset();
+  stage1(false);
+  if(n >= 2){ ACT.confirmDetails(find('ship'), btnOf(find('ship'),'confirmDetails'), true); }
+  let start = S.thread.length;
+  if(n >= 2){ stage2(false); }
+  if(n >= 3){ const av = find('avail'); ACT.available(av, btnOf(av,'available'), true); start = S.thread.length; stage3(false); }
+  if(n === 1) start = 0;
+  markFrom(start); S.smooth = false; render();
+}
+function goStage(n){
+  if(S.busy) return;
+  exitDemo(true);
+  if(n > S.stage){
+    const start = S.thread.length;
+    if(S.stage < 2 && n >= 2) stage2(false);
+    if(S.stage < 3 && n >= 3){ stage3(false); }
+    markFrom(start); S.smooth = true; render();
+  } else canonical(n);
+}
+function nextStage(){
+  if(S.busy) return;
+  if(S.stage < 3) return goStage(S.stage + 1);
+  goStage(1);
+}
+
+/* ---------- Demo flow ---------- */
+const DEMO = [
+  {t:'Order shipped', c:'Meesho messages at dispatch, two days before delivery.', run:()=>stage1(false)},
+  {t:'Customer verifies details', c:'Address and mobile are confirmed before the rider leaves.', run:()=>{ const s=find('ship'); ACT.confirmDetails(s, btnOf(s,'confirmDetails'), true); }},
+  {t:'One day before delivery', c:'The new intervention point. Valmo sends nothing on this day.', run:()=>stage2(false)},
+  {t:'Customer confirms availability', c:'Availability is settled the evening before; COD customers are reminded to keep the amount ready.', run:()=>{ const a=find('avail'); ACT.available(a, btnOf(a,'available'), true); }},
+  {t:'Delivered · confirm receipt', c:"No out-for-delivery message needed; the customer was expecting it. Valmo's first message only arrives on this day.", run:()=>stage3(false)}
+];
+function buildDemo(k){
+  S = fresh(); S.demo = k;
+  for(let i=0;i<k-1;i++) DEMO[i].run();
+  const start = S.thread.length;
+  DEMO[k-1].run();
+  markFrom(start); S.smooth = false;
+  document.body.classList.add('demo');
+  render();
+}
+function exitDemo(silent){
+  if(!S.demo) return;
+  S.demo = 0; document.body.classList.remove('demo');
+  if(!silent) render();
+}
+function renderDemo(){
+  const bar = document.getElementById('demobar');
+  const on = S.demo > 0;
+  bar.hidden = !on;
+  document.getElementById('demoBtn').textContent = on ? '■ Exit demo' : '▶ Demo flow';
+  if(!on) return;
+  const d = DEMO[S.demo-1];
+  document.getElementById('dStep').textContent = `Step ${S.demo} / ${DEMO.length}`;
+  document.getElementById('dTitle').textContent = d.t;
+  document.getElementById('dCap').textContent = d.c;
+  document.getElementById('dDots').innerHTML = DEMO.map((_,i)=>`<i class="${i<S.demo?'on':''}"></i>`).join('');
+  document.getElementById('dPrev').disabled = S.demo === 1;
+  document.getElementById('dNext').textContent = S.demo === DEMO.length ? 'Finish' : 'Next →';
+}
+function demoNext(){ if(S.demo >= DEMO.length) exitDemo(); else buildDemo(S.demo + 1); }
+function demoPrev(){ if(S.demo > 1) buildDemo(S.demo - 1); }
+
+/* ---------- Events ---------- */
+mchat.addEventListener('click', e=>{
+  const lk = e.target.closest('.b-link');
+  if(lk){ LINKS[lk.dataset.link](); return; }
+  const el = e.target.closest('.wa-btn'); if(!el || el.disabled || S.busy) return;
+  const m = S.thread.find(x=>x.id === +el.dataset.msg); if(!m) return;
+  const b = m.buttons[+el.dataset.i];
+  ACT[b.act](m, b, false);
+  if(!b.link) render();
+});
+document.getElementById('seg').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(b) goStage(+b.dataset.stage);
+});
+document.getElementById('nextStage').addEventListener('click', nextStage);
+document.getElementById('demoBtn').addEventListener('click', ()=>{ if(S.busy) return; S.demo ? exitDemo() : buildDemo(1); });
+document.getElementById('resetBtn').addEventListener('click', ()=>{ S.busy=false; S.typing=false; exitDemo(true); S.demo=0; document.body.classList.remove('demo'); canonical(2); });
+document.getElementById('dNext').addEventListener('click', demoNext);
+document.getElementById('dPrev').addEventListener('click', demoPrev);
+document.getElementById('dExit').addEventListener('click', ()=>exitDemo());
+document.addEventListener('keydown', e=>{
+  if(e.metaKey || e.ctrlKey || e.altKey) return;
+  const onButton = e.target.closest && e.target.closest('button');
+  if(S.demo){
+    if(e.key === 'ArrowRight' || (!onButton && (e.key === ' ' || e.key === 'Enter'))){ e.preventDefault(); demoNext(); return; }
+    if(e.key === 'ArrowLeft'){ e.preventDefault(); demoPrev(); return; }
+    if(e.key === 'Escape'){ exitDemo(); return; }
+  }
+  if(['1','2','3'].includes(e.key)) goStage(+e.key);
+  else if(e.key === 'd' || e.key === 'D'){ if(!S.busy) (S.demo ? exitDemo() : buildDemo(1)); }
+  else if(!S.demo && e.key === 'ArrowRight') nextStage();
+});
+
+/* Opens on the key comparison: Valmo's "out for delivery" vs Meesho's "arrives tomorrow" */
+S = fresh();
+canonical(2);
+S.thread.forEach(m=>m.anim=false);
+document.getElementById('vchat').scrollTop = 0;
+})();
+</script>
+
+</body></html>
